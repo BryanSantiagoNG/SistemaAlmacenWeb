@@ -1,0 +1,119 @@
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Sistema Almacén</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/SistemaAlmacenWeb.styles.css" asp-append-version="true" />
+
+    <!-- FontAwesome (Iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+    <header>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+            <div class="container-fluid">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    <i class="fa-solid fa-boxes-stacked"></i> Sistema Almacén
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+
+                    <!-- MENÚ IZQUIERDO (PRINCIPAL) -->
+                    <ul class="navbar-nav flex-grow-1">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                        </li>
+
+                        <!-- MENÚ DESPLEGABLE: CATÁLOGOS -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownCat" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Catálogos
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownCat">
+                                <li><a class="dropdown-item" asp-controller="Articulos" asp-action="Index"><i class="fa fa-box"></i> Artículos</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Proveedores" asp-action="Index"><i class="fa fa-truck"></i> Proveedores</a></li>
+                                <li><a class="dropdown-item" asp-controller="Clientes" asp-action="Index"><i class="fa fa-users"></i> Clientes</a></li>
+                            </ul>
+                        </li>
+
+                        <!-- MENÚ DESPLEGABLE: OPERACIONES -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownOps" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Operaciones
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownOps">
+                                <li><a class="dropdown-item" asp-controller="Ventas" asp-action="Index"><i class="fa fa-cash-register"></i> Punto de Venta</a></li>
+                                <li><a class="dropdown-item" asp-controller="Pedidos" asp-action="Index"><i class="fa fa-clipboard-list"></i> Pedidos (Compras)</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link text-warning" asp-controller="Articulos" asp-action="Index"><i class="fa fa-search"></i> Consultas</a>
+                        </li>
+                    </ul>
+
+                    <!-- MENÚ DERECHO (USUARIO / LOGIN) -->
+                    <ul class="navbar-nav">
+                        @{
+                            // Recuperamos el nombre del usuario de la sesión
+                            var nombreUsuario = HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre");
+                        }
+
+                        @if (!string.IsNullOrEmpty(nombreUsuario))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-light" asp-controller="Acceso" asp-action="Perfil" title="Ver Perfil">
+                                    Hola, <strong>@nombreUsuario</strong> <i class="fa fa-user-circle"></i>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="btn btn-outline-danger btn-sm ms-2 mt-1" asp-controller="Acceso" asp-action="Logout">
+                                    <i class="fa fa-sign-out-alt"></i> Salir
+                                </a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-controller="Acceso" asp-action="Login">
+                                    <i class="fa fa-sign-in-alt"></i> Iniciar Sesión
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="container">
+        <main role="main" class="pb-3">
+            @RenderBody()
+        </main>
+    </div>
+
+    <footer class="border-top footer text-muted bg-light">
+        <div class="container text-center">
+            &copy; 2024 - Sistema Almacén Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

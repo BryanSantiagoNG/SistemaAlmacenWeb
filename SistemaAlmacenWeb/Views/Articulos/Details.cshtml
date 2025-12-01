@@ -1,0 +1,50 @@
+﻿@model SistemaAlmacenWeb.Models.Articulo
+
+@{
+    ViewData["Title"] = "Detalles";
+}
+
+<h1>Detalles del Artículo</h1>
+
+<div class="card">
+    <div class="card-header bg-info text-white">
+        <h4 class="mb-0">@Model.Descripcion</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Código Interno</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.CodigoInterno)</dd>
+
+            <dt class="col-sm-3">Código Barras</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.CodigoBarras)</dd>
+
+            <dt class="col-sm-3">Marca</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Marca)</dd>
+
+            <dt class="col-sm-3">Stock Actual</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Cantidad)</dd>
+
+            <dt class="col-sm-3">Precio Compra</dt>
+            <dd class="col-sm-9">@Model.PrecioCompra.ToString("C2")</dd>
+
+            <dt class="col-sm-3">Precio Venta</dt>
+            <dd class="col-sm-9">@Model.PrecioVenta.ToString("C2")</dd>
+
+            <hr />
+
+            <dt class="col-sm-3">Proveedor</dt>
+            <dd class="col-sm-9">
+                @(Model.Proveedor != null ? Model.Proveedor.Nombre : "No asignado")
+            </dd>
+
+            <dt class="col-sm-3">Distribuidor</dt>
+            <dd class="col-sm-9">
+                @(Model.Distribuidor != null ? Model.Distribuidor.Nombre : "No asignado")
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model?.IdArticulo" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+    </div>
+</div>

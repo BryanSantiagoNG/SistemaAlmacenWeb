@@ -1,0 +1,70 @@
+﻿@{
+    ViewData["Title"] = "Inicio";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Bienvenido al Sistema de Almacén</h1>
+    <p>Seleccione una opción para comenzar a trabajar.</p>
+</div>
+
+<hr />
+
+<div class="row mt-4">
+    <!-- Tarjeta Artículos -->
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-primary">📦 Artículos</h3>
+                <p class="card-text">Administrar inventario, precios y existencias.</p>
+                <a asp-controller="Articulos" asp-action="Index" class="btn btn-outline-primary w-100">Ir a Inventario</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta Clientes -->
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-success">👥 Clientes</h3>
+                <p class="card-text">Registrar y gestionar cartera de clientes.</p>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-outline-success w-100">Ver Clientes</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta Proveedores -->
+    <div class="col-md-4 mb-3">
+        <div class="card text-center h-100 shadow-sm">
+            <div class="card-body">
+                <h3 class="card-title text-info">🚚 Proveedores</h3>
+                <p class="card-text">Gestionar proveedores y catálogos de compra.</p>
+                <a asp-controller="Proveedores" asp-action="Index" class="btn btn-outline-info w-100">Ver Proveedores</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-2">
+    <!-- Tarjeta Ventas -->
+    <div class="col-md-6 mb-3">
+        <div class="card text-white bg-dark text-center h-100">
+            <div class="card-body">
+                <h3 class="card-title">💰 Punto de Venta</h3>
+                <p class="card-text">Realizar una nueva venta de mostrador.</p>
+                <!-- Si aun no tienes VentasController, este botón dará error 404, pero ya está listo el link -->
+                <a asp-controller="Ventas" asp-action="Index" class="btn btn-light w-100">Nueva Venta</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tarjeta Pedidos -->
+    <div class="col-md-6 mb-3">
+        <div class="card text-white bg-secondary text-center h-100">
+            <div class="card-body">
+                <h3 class="card-title">📋 Compras / Pedidos</h3>
+                <p class="card-text">Reabastecer almacén con proveedores.</p>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-light w-100">Nuevo Pedido</a>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,97 @@
+﻿@model SistemaAlmacenWeb.Models.Articulo
+
+@{
+    ViewData["Title"] = "Crear Artículo";
+}
+
+<h1>Registrar Nuevo Artículo</h1>
+<hr />
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <!-- Fila 1: Códigos -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="CodigoInterno" class="control-label"></label>
+                    <input asp-for="CodigoInterno" class="form-control" placeholder="Ej. A-001" />
+                    <span asp-validation-for="CodigoInterno" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="CodigoBarras" class="control-label"></label>
+                    <input asp-for="CodigoBarras" class="form-control" placeholder="Escanee código aquí" />
+                    <span asp-validation-for="CodigoBarras" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Fila 2: Descripción y Marca -->
+            <div class="mb-3">
+                <label asp-for="Descripcion" class="control-label"></label>
+                <input asp-for="Descripcion" class="form-control" />
+                <span asp-validation-for="Descripcion" class="text-danger"></span>
+            </div>
+
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="Marca" class="control-label"></label>
+                    <input asp-for="Marca" class="form-control" />
+                    <span asp-validation-for="Marca" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="Cantidad" class="control-label"></label>
+                    <input asp-for="Cantidad" class="form-control" type="number" />
+                    <span asp-validation-for="Cantidad" class="text-danger"></span>
+                </div>
+            </div>
+
+            <!-- Fila 3: Relaciones (Comboboxes) -->
+            <div class="row mb-3 p-3 bg-light border rounded">
+                <div class="col-md-6">
+                    <label asp-for="IdProveedor" class="control-label fw-bold">Proveedor</label>
+                    <select asp-for="IdProveedor" class="form-control" asp-items="ViewBag.IdProveedor">
+                        <option value="">-- Seleccione Proveedor --</option>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="IdDistribuidor" class="control-label fw-bold">Distribuidor</label>
+                    <select asp-for="IdDistribuidor" class="form-control" asp-items="ViewBag.IdDistribuidor">
+                        <option value="">-- Seleccione Distribuidor --</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Fila 4: Precios -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label asp-for="PrecioCompra" class="control-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input asp-for="PrecioCompra" class="form-control" type="number" step="0.01" />
+                    </div>
+                    <span asp-validation-for="PrecioCompra" class="text-danger"></span>
+                </div>
+                <div class="col-md-6">
+                    <label asp-for="PrecioVenta" class="control-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text">$</span>
+                        <input asp-for="PrecioVenta" class="form-control" type="number" step="0.01" />
+                    </div>
+                    <span asp-validation-for="PrecioVenta" class="text-danger"></span>
+                </div>
+            </div>
+
+            <div class="form-group mt-4">
+                <input type="submit" value="Guardar Artículo" class="btn btn-success btn-lg" />
+                <a asp-action="Index" class="btn btn-secondary btn-lg">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

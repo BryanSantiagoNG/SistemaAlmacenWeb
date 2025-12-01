@@ -1,0 +1,63 @@
+﻿@model SistemaAlmacenWeb.Models.Proveedor
+
+@{
+    ViewData["Title"] = "Detalles";
+}
+
+<h1>Detalles del Proveedor</h1>
+
+<div class="card mb-4">
+    <div class="card-header">
+        Información General
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Nombre</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Nombre)</dd>
+
+            <dt class="col-sm-3">Teléfono</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Telefono)</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Email)</dd>
+
+            <dt class="col-sm-3">Dirección</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.Direccion)</dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Edit" asp-route-id="@Model?.IdProveedor" class="btn btn-warning">Editar</a>
+        <a asp-action="Index" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+
+<!-- Bonus: Lista de Artículos de este proveedor -->
+<h3>Productos que surte este proveedor:</h3>
+@if (Model.Articulos != null && Model.Articulos.Count > 0)
+{
+    <table class="table table-sm table-bordered">
+        <thead>
+            <tr>
+                <th>Código</th>
+                <th>Descripción</th>
+                <th>Marca</th>
+                <th>Stock</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var art in Model.Articulos)
+            {
+                <tr>
+                    <td>@art.CodigoInterno</td>
+                    <td>@art.Descripcion</td>
+                    <td>@art.Marca</td>
+                    <td>@art.Cantidad</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-info">Este proveedor no tiene artículos registrados aún.</div>
+}
