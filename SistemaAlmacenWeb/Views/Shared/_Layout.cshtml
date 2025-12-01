@@ -6,7 +6,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Sistema Almacén</title>
+    <title>@ViewData["Title"] - ALMAXEN</title>
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -20,9 +20,18 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="fa-solid fa-boxes-stacked"></i> Sistema Almacén
+
+                <!-- MARCA Y LOGO -->
+                <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
+                    <!-- LOGO: Busca la imagen en wwwroot/img/logo.png -->
+                    <img src="~/img/logo.png" alt="Logo" width="35" height="35" class="me-2 d-inline-block align-text-top"
+                         style="filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)); object-fit: contain;"
+                         onerror="this.style.display='none'" />
+
+                    <!-- TEXTO ALMAXEN -->
+                    <span style="font-weight: 800; letter-spacing: 2px; font-size: 1.25rem; color: #ffffff;">ALMAXEN</span>
                 </a>
+
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -31,7 +40,7 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 
                     <!-- MENÚ IZQUIERDO (PRINCIPAL) -->
-                    <ul class="navbar-nav flex-grow-1">
+                    <ul class="navbar-nav flex-grow-1 ms-3">
                         <li class="nav-item">
                             <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
@@ -42,10 +51,10 @@
                                 Catálogos
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownCat">
-                                <li><a class="dropdown-item" asp-controller="Articulos" asp-action="Index"><i class="fa fa-box"></i> Artículos</a></li>
+                                <li><a class="dropdown-item" asp-controller="Articulos" asp-action="Index"><i class="fa fa-box me-2"></i> Artículos</a></li>
                                 <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" asp-controller="Proveedores" asp-action="Index"><i class="fa fa-truck"></i> Proveedores</a></li>
-                                <li><a class="dropdown-item" asp-controller="Clientes" asp-action="Index"><i class="fa fa-users"></i> Clientes</a></li>
+                                <li><a class="dropdown-item" asp-controller="Proveedores" asp-action="Index"><i class="fa fa-truck me-2"></i> Proveedores</a></li>
+                                <li><a class="dropdown-item" asp-controller="Clientes" asp-action="Index"><i class="fa fa-users me-2"></i> Clientes</a></li>
                             </ul>
                         </li>
 
@@ -55,8 +64,10 @@
                                 Operaciones
                             </a>
                             <ul class="dropdown-menu" aria-labelledby="navbarDropdownOps">
-                                <li><a class="dropdown-item" asp-controller="Ventas" asp-action="Index"><i class="fa fa-cash-register"></i> Punto de Venta</a></li>
-                                <li><a class="dropdown-item" asp-controller="Pedidos" asp-action="Index"><i class="fa fa-clipboard-list"></i> Pedidos (Compras)</a></li>
+                                <li><a class="dropdown-item" asp-controller="Ventas" asp-action="Index"><i class="fa fa-cash-register me-2"></i> Punto de Venta</a></li>
+                                <li><a class="dropdown-item" asp-controller="Facturas" asp-action="Index"><i class="fa fa-receipt me-2"></i> Historial Ventas</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" asp-controller="Pedidos" asp-action="Index"><i class="fa fa-clipboard-list me-2"></i> Pedidos (Compras)</a></li>
                             </ul>
                         </li>
 
@@ -68,7 +79,7 @@
                     <!-- MENÚ DERECHO (USUARIO / LOGIN) -->
                     <ul class="navbar-nav">
                         @{
-                            // Recuperamos el nombre del usuario de la sesión
+                            // Recuperamos el nombre del usuario de la sesión actual
                             var nombreUsuario = HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre");
                         }
 
@@ -76,11 +87,11 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-light" asp-controller="Acceso" asp-action="Perfil" title="Ver Perfil">
-                                    Hola, <strong>@nombreUsuario</strong> <i class="fa fa-user-circle"></i>
+                                    Hola, <strong>@nombreUsuario</strong> <i class="fa fa-user-circle ms-1"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="btn btn-outline-danger btn-sm ms-2 mt-1" asp-controller="Acceso" asp-action="Logout">
+                                <a class="btn btn-outline-danger btn-sm ms-3 mt-1" asp-controller="Acceso" asp-action="Logout">
                                     <i class="fa fa-sign-out-alt"></i> Salir
                                 </a>
                             </li>
@@ -89,7 +100,7 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-white" asp-controller="Acceso" asp-action="Login">
-                                    <i class="fa fa-sign-in-alt"></i> Iniciar Sesión
+                                    <i class="fa fa-sign-in-alt me-1"></i> Iniciar Sesión
                                 </a>
                             </li>
                         }
@@ -105,9 +116,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-light">
-        <div class="container text-center">
-            &copy; 2024 - Sistema Almacén Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+    <footer class="border-top footer text-muted bg-dark mt-auto py-3">
+        <div class="container text-center text-secondary">
+            &copy; 2024 - <strong>ALMAXEN</strong> - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-secondary">Privacidad</a>
         </div>
     </footer>
 

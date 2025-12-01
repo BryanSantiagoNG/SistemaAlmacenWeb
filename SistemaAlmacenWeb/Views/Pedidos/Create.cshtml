@@ -1,0 +1,265 @@
+﻿@{
+    ViewData["Title"] = "Nuevo Pedido";
+}
+
+<div class="row">
+    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
+    <div class="col-md-4">
+        <div class="card p-3 mb-3 border-secondary">
+            <h4 class="card-title text-light mb-3"><i class="fas fa-file-invoice"></i> Datos del Pedido</h4>
+
+            <div class="form-group mb-3">
+                <label class="control-label text-warning">1. Seleccione Proveedor</label>
+                <select id="cmbProveedor" class="form-select" asp-items="ViewBag.IdProveedor">
+                    <option value="">-- Seleccione --</option>
+                </select>
+            </div>
+
+            <hr class="border-secondary" />
+
+            <h5 class="text-muted mb-3">2. Agregar Producto</h5>
+
+            <div class="form-group mb-2">
+                <label>Artículo</label>
+                <!-- Inicia deshabilitado hasta que elijan proveedor -->
+                <select id="cmbArticulo" class="form-select" disabled>
+                    <option value="">-- Primero elija un proveedor --</option>
+                </select>
+            </div>
+
+            <div class="row">
+                <div class="col-6 mb-2">
+                    <label>Costo Unitario</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-dark border-secondary text-muted">$</span>
+                        <input type="number" id="txtCosto" class="form-control" step="0.01" />
+                    </div>
+                </div>
+                <div class="col-6 mb-2">
+                    <label>Cantidad</label>
+                    <input type="number" id="txtCantidad" class="form-control" value="1" min="1" />
+                </div>
+            </div>
+
+            <button class="btn btn-primary w-100 mt-3 fw-bold" onclick="agregarProducto()">
+                <i class="fas fa-plus-circle"></i> Agregar a la Lista
+            </button>
+        </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: TABLA DE DETALLES -->
+    <div class="col-md-8">
+        <div class="card p-3 h-100 border-secondary" style="background-color: var(--surface);">
+            <div class="d-flex justify-content-between align-items-center">
+                <h4 class="card-title text-light">Detalle de Compra</h4>
+                <div class="text-end">
+                    <small class="text-muted d-block">Total Estimado</small>
+                    <!-- Color verde brillante para el precio -->
+                    <h2 class="fw-bold m-0" id="lblTotal" style="color: #4ade80;">$0.00</h2>
+                </div>
+            </div>
+
+            <div class="table-responsive mt-3" style="max-height: 400px; overflow-y: auto;">
+                <table class="table align-middle">
+                    <thead>
+                        <!-- Encabezado rojo oscuro -->
+                        <tr style="background-color: var(--primary); color: white;">
+                            <th>Producto</th>
+                            <th>Costo</th>
+                            <th>Cant.</th>
+                            <th>Subtotal</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="tablaDetalles">
+                        <!-- JS llenará esto -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="mt-auto pt-3">
+                <button class="btn btn-success btn-lg w-100 shadow" onclick="guardarPedido()">
+                    <i class="fas fa-save"></i> FINALIZAR PEDIDO
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let listaProductos = [];
+
+        // 1. EVENTO: AL CAMBIAR PROVEEDOR -> CARGAR ARTÍCULOS
+        document.getElementById("cmbProveedor").addEventListener("change", async function() {
+            let idProv = this.value;
+            let cmbArt = document.getElementById("cmbArticulo");
+
+            // Limpiar combo de artículos
+            cmbArt.innerHTML = '<option value="">Cargando...</option>';
+            cmbArt.value = "";
+            document.getElementById("txtCosto").value = "";
+
+            if (!idProv) {
+                cmbArt.innerHTML = '<option value="">-- Primero elija un proveedor --</option>';
+                cmbArt.disabled = true;
+                return;
+            }
+
+            // Petición al servidor
+            try {
+                let response = await fetch(`/Pedidos/GetArticulosPorProveedor?idProveedor=${idProv}`);
+                let articulos = await response.json();
+
+                cmbArt.innerHTML = '<option value="">-- Seleccione Artículo --</option>';
+
+                if (articulos.length === 0) {
+                    cmbArt.innerHTML = '<option value="">Este proveedor no tiene artículos asignados</option>';
+                } else {
+                    articulos.forEach(art => {
+                        // Guardamos el precio en un atributo data-precio para no hacer otra consulta
+                        let option = document.createElement("option");
+                        option.value = art.id;
+                        option.text = art.nombre;
+                        option.setAttribute("data-precio", art.precio); // TRUCO
+                        cmbArt.appendChild(option);
+                    });
+                    cmbArt.disabled = false;
+                }
+            } catch (error) {
+                console.error(error);
+                cmbArt.innerHTML = '<option value="">Error al cargar</option>';
+            }
+        });
+
+        // 2. EVENTO: AL SELECCIONAR ARTÍCULO -> PONER PRECIO AUTOMÁTICO
+        document.getElementById("cmbArticulo").addEventListener("change", function() {
+            // Obtenemos el precio del atributo data-precio que guardamos arriba
+            let precio = this.options[this.selectedIndex].getAttribute("data-precio");
+            if (precio) {
+                document.getElementById("txtCosto").value = parseFloat(precio).toFixed(2);
+            } else {
+                document.getElementById("txtCosto").value = "";
+            }
+        });
+
+        // 3. AGREGAR A LA TABLA VISUAL
+        function agregarProducto() {
+            let cmbArt = document.getElementById("cmbArticulo");
+            let idArticulo = cmbArt.value;
+            let nombreArt = cmbArt.options[cmbArt.selectedIndex].text;
+            let costo = parseFloat(document.getElementById("txtCosto").value);
+            let cantidad = parseInt(document.getElementById("txtCantidad").value);
+
+            if (!idArticulo || isNaN(costo) || isNaN(cantidad) || cantidad < 1) {
+                Swal.fire({
+                    title: "Datos incompletos",
+                    text: "Seleccione un artículo y verifique cantidad/costo",
+                    icon: "warning",
+                    background: '#292c37', color: '#fff'
+                });
+                return;
+            }
+
+            // Evitar duplicados visuales (opcional, sumamos cantidad si ya existe)
+            let existente = listaProductos.find(p => p.id === idArticulo);
+            if (existente) {
+                existente.cantidad += cantidad;
+                existente.subtotal = existente.cantidad * existente.costo;
+            } else {
+                listaProductos.push({
+                    id: idArticulo,
+                    nombre: nombreArt.split('-')[1] || nombreArt, // Limpiar texto para que se vea bien
+                    costo: costo,
+                    cantidad: cantidad,
+                    subtotal: costo * cantidad
+                });
+            }
+
+            renderizarTabla();
+
+            // Resetear inputs pequeños
+            cmbArt.value = "";
+            document.getElementById("txtCosto").value = "";
+            document.getElementById("txtCantidad").value = "1";
+            cmbArt.focus();
+        }
+
+        // 4. DIBUJAR TABLA
+        function renderizarTabla() {
+            let tbody = document.getElementById("tablaDetalles");
+            tbody.innerHTML = "";
+            let total = 0;
+
+            listaProductos.forEach((item, index) => {
+                total += item.subtotal;
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${item.nombre}</td>
+                        <td>$${item.costo.toFixed(2)}</td>
+                        <td>${item.cantidad}</td>
+                        <td class="fw-bold">$${item.subtotal.toFixed(2)}</td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarFila(${index})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById("lblTotal").innerText = "$" + total.toFixed(2);
+        }
+
+        function eliminarFila(index) {
+            listaProductos.splice(index, 1);
+            renderizarTabla();
+        }
+
+        // 5. GUARDAR EN BD
+        async function guardarPedido() {
+            let idProv = document.getElementById("cmbProveedor").value;
+
+            if (listaProductos.length === 0) {
+                Swal.fire({ title: "Carrito vacío", icon: "warning", background: '#292c37', color: '#fff' });
+                return;
+            }
+
+            let datosDTO = {
+                IdProveedor: parseInt(idProv),
+                Detalles: listaProductos.map(p => ({
+                    IdArticulo: parseInt(p.id),
+                    Cantidad: p.cantidad,
+                    PrecioUnitario: p.costo
+                }))
+            };
+
+            try {
+                let response = await fetch('/Pedidos/ConfirmarPedido', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosDTO)
+                });
+
+                if (response.ok) {
+                    Swal.fire({
+                        title: "¡Pedido Guardado!",
+                        text: "El stock ha sido actualizado correctamente.",
+                        icon: "success",
+                        confirmButtonColor: '#9f111b',
+                        background: '#292c37', color: '#fff'
+                    }).then(() => {
+                        window.location.href = "/Pedidos/Index";
+                    });
+                } else {
+                    let text = await response.text();
+                    Swal.fire("Error", text, "error");
+                }
+            } catch (err) {
+                console.error(err);
+                Swal.fire("Error", "Fallo de conexión", "error");
+            }
+        }
+    </script>
+}

@@ -27,9 +27,20 @@ namespace SistemaAlmacenWeb.Controllers
         // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null) return NotFound();
-            var cliente = await _context.Clientes.FirstOrDefaultAsync(m => m.IdCliente == id);
-            if (cliente == null) return NotFound();
+            if (id == null || _context.Clientes == null)
+            {
+                return NotFound();
+            }
+
+            var cliente = await _context.Clientes
+                .Include(c => c.Facturas) // <--- AGREGAMOS ESTO PARA VER SUS COMPRAS
+                .FirstOrDefaultAsync(m => m.IdCliente == id);
+
+            if (cliente == null)
+            {
+                return NotFound();
+            }
+
             return View(cliente);
         }
 

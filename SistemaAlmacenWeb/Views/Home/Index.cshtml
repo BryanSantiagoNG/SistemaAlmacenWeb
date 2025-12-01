@@ -2,69 +2,99 @@
     ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Bienvenido al Sistema de Almacén</h1>
-    <p>Seleccione una opción para comenzar a trabajar.</p>
+<div class="text-center py-4">
+    <h1 class="display-4 fw-bold text-light">Bienvenido a ALMAXEN</h1>
+    <p class="text-muted fs-5">Seleccione una opción para comenzar a trabajar.</p>
 </div>
 
-<hr />
+<hr class="border-secondary mb-5" />
 
-<div class="row mt-4">
-    <!-- Tarjeta Artículos -->
-    <div class="col-md-4 mb-3">
-        <div class="card text-center h-100 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-primary">📦 Artículos</h3>
-                <p class="card-text">Administrar inventario, precios y existencias.</p>
-                <a asp-controller="Articulos" asp-action="Index" class="btn btn-outline-primary w-100">Ir a Inventario</a>
+<!-- FILA 1: CATÁLOGOS -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center h-100 shadow hover-scale">
+            <div class="card-body py-4">
+                <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
+                <h3 class="card-title text-light">Artículos</h3>
+                <p class="card-text text-muted">Administrar inventario, precios y existencias.</p>
+                <a asp-controller="Articulos" asp-action="Index" class="btn btn-outline-primary w-75 stretched-link">Ir a Inventario</a>
             </div>
         </div>
     </div>
 
-    <!-- Tarjeta Clientes -->
-    <div class="col-md-4 mb-3">
-        <div class="card text-center h-100 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-success">👥 Clientes</h3>
-                <p class="card-text">Registrar y gestionar cartera de clientes.</p>
-                <a asp-controller="Clientes" asp-action="Index" class="btn btn-outline-success w-100">Ver Clientes</a>
+    <div class="col-md-4">
+        <div class="card text-center h-100 shadow hover-scale">
+            <div class="card-body py-4">
+                <i class="fas fa-users fa-3x text-success mb-3"></i>
+                <h3 class="card-title text-light">Clientes</h3>
+                <p class="card-text text-muted">Registrar y gestionar cartera de clientes.</p>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-outline-success w-75 stretched-link">Ver Clientes</a>
             </div>
         </div>
     </div>
 
-    <!-- Tarjeta Proveedores -->
-    <div class="col-md-4 mb-3">
-        <div class="card text-center h-100 shadow-sm">
-            <div class="card-body">
-                <h3 class="card-title text-info">🚚 Proveedores</h3>
-                <p class="card-text">Gestionar proveedores y catálogos de compra.</p>
-                <a asp-controller="Proveedores" asp-action="Index" class="btn btn-outline-info w-100">Ver Proveedores</a>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-2">
-    <!-- Tarjeta Ventas -->
-    <div class="col-md-6 mb-3">
-        <div class="card text-white bg-dark text-center h-100">
-            <div class="card-body">
-                <h3 class="card-title">💰 Punto de Venta</h3>
-                <p class="card-text">Realizar una nueva venta de mostrador.</p>
-                <!-- Si aun no tienes VentasController, este botón dará error 404, pero ya está listo el link -->
-                <a asp-controller="Ventas" asp-action="Index" class="btn btn-light w-100">Nueva Venta</a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Tarjeta Pedidos -->
-    <div class="col-md-6 mb-3">
-        <div class="card text-white bg-secondary text-center h-100">
-            <div class="card-body">
-                <h3 class="card-title">📋 Compras / Pedidos</h3>
-                <p class="card-text">Reabastecer almacén con proveedores.</p>
-                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-light w-100">Nuevo Pedido</a>
+    <div class="col-md-4">
+        <div class="card text-center h-100 shadow hover-scale">
+            <div class="card-body py-4">
+                <i class="fas fa-truck fa-3x text-info mb-3"></i>
+                <h3 class="card-title text-light">Proveedores</h3>
+                <p class="card-text text-muted">Gestionar proveedores y catálogos.</p>
+                <a asp-controller="Proveedores" asp-action="Index" class="btn btn-outline-info w-75 stretched-link">Ver Proveedores</a>
             </div>
         </div>
     </div>
 </div>
+
+<!-- FILA 2: OPERACIONES -->
+<div class="row g-4">
+
+    <!-- VENTAS -->
+    <div class="col-md-4">
+        <div class="card text-center h-100 shadow hover-scale border-warning" style="border-width: 1px;">
+            <div class="card-body py-4" style="background: linear-gradient(180deg, rgba(255,193,7,0.05) 0%, rgba(0,0,0,0) 100%);">
+                <i class="fas fa-cash-register fa-3x text-warning mb-3"></i>
+                <h3 class="card-title text-white">Punto de Venta</h3>
+                <p class="card-text text-muted">Realizar ventas de mostrador.</p>
+                <a asp-controller="Ventas" asp-action="Index" class="btn btn-warning w-75 text-dark fw-bold stretched-link">Nueva Venta</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- PEDIDOS -->
+    <div class="col-md-4">
+        <div class="card text-center h-100 shadow hover-scale">
+            <div class="card-body py-4">
+                <i class="fas fa-clipboard-list fa-3x text-light mb-3"></i>
+                <h3 class="card-title text-light">Compras / Pedidos</h3>
+                <p class="card-text text-muted">Reabastecer almacén.</p>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-light w-75 stretched-link">Nuevo Pedido</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORIAL (EL NUEVO) -->
+    <div class="col-md-4">
+        <div class="card text-center h-100 shadow hover-scale">
+            <div class="card-body py-4">
+                <i class="fas fa-receipt fa-3x text-danger mb-3"></i> <!-- Icono Rojo -->
+                <h3 class="card-title text-light">Historial Ventas</h3>
+                <p class="card-text text-muted">Consultar facturas y tickets.</p>
+                <a asp-controller="Facturas" asp-action="Index" class="btn btn-outline-danger w-75 stretched-link">Ver Facturas</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Estilo extra para animación hover en las tarjetas -->
+<style>
+    .hover-scale {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .hover-scale:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
+            border-color: var(--primary);
+        }
+</style>

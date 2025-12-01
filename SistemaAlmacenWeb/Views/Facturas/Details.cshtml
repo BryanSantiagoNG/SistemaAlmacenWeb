@@ -1,0 +1,125 @@
+﻿@model SistemaAlmacenWeb.Models.Factura
+
+@{
+    ViewData["Title"] = "Ticket de Venta";
+}
+
+<!-- ESTILOS SOLO PARA IMPRESIÓN -->
+<style>
+    @@media print {
+        header, footer, .btn-print, .btn-back {
+            display: none !important;
+        }
+
+        body {
+            background-color: white !important;
+            color: black !important;
+        }
+
+        .card {
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .text-light, .text-white {
+            color: black !important;
+        }
+
+        .bg-dark, .bg-primary {
+            background-color: transparent !important;
+            color: black !important;
+            border: 1px solid #ccc;
+        }
+        /* Forzar impresión en hoja completa o ticket */
+    }
+</style>
+
+<div class="container mt-4" style="max-width: 600px;">
+
+    <!-- BOTONES DE ACCIÓN -->
+    <div class="d-flex justify-content-between mb-3 no-print">
+        <a asp-action="Index" class="btn btn-secondary btn-back">
+            <i class="fas fa-arrow-left me-2"></i> Volver
+        </a>
+        <button onclick="window.print()" class="btn btn-warning fw-bold btn-print">
+            <i class="fas fa-print me-2"></i> IMPRIMIR TICKET
+        </button>
+    </div>
+
+    <!-- EL TICKET -->
+    <div class="card shadow-lg border-0">
+        <!-- Encabezado Ticket -->
+        <div class="card-header text-center p-4" style="background-color: var(--primary); color: white;">
+            <i class="fas fa-box-open fa-3x mb-2"></i>
+            <h2 class="fw-bold mb-0">ALMAXEN</h2>
+            <small>Ticket de Venta</small>
+        </div>
+
+        <div class="card-body p-4" style="background-color: var(--surface);">
+
+            <!-- Datos Generales -->
+            <div class="row mb-3 text-center">
+                <div class="col-6 border-end border-secondary">
+                    <small class="text-muted">FOLIO</small>
+                    <h4 class="text-white">#@Model.IdFactura</h4>
+                </div>
+                <div class="col-6">
+                    <small class="text-muted">FECHA</small>
+                    <p class="text-white mb-0">@Model.Fecha.ToString("dd/MM/yyyy")</p>
+                    <small class="text-white">@Model.Fecha.ToString("HH:mm") hrs</small>
+                </div>
+            </div>
+
+            <hr class="border-secondary" />
+
+            <!-- Datos Cliente -->
+            <div class="mb-4">
+                <small class="text-muted">CLIENTE</small>
+                <h5 class="text-white mb-0">@(Model.Cliente != null ? Model.Cliente.Nombre : "Público General")</h5>
+                @if (Model.Cliente != null && !string.IsNullOrEmpty(Model.Cliente.RFC))
+                {
+                    <small class="text-muted">RFC: @Model.Cliente.RFC</small>
+                }
+            </div>
+
+            <!-- Tabla de Productos -->
+            <table class="table table-sm align-middle mb-4">
+                <thead style="border-bottom: 1px solid #666;">
+                    <tr class="text-muted small">
+                        <th>CANT.</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th class="text-end">IMPORTE</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.DetalleFacturas)
+                    {
+                        <tr>
+                            <td class="text-white">@item.Cantidad</td>
+                            <td>
+                                <span class="text-white">@item.Articulo.Descripcion</span><br />
+                                <small class="text-muted">$@item.PrecioUnitario.ToString("N2") c/u</small>
+                            </td>
+                            <td class="text-end text-white">$@((item.Cantidad * item.PrecioUnitario).ToString("N2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <!-- Totales -->
+            <div class="d-flex justify-content-between align-items-center p-3 rounded" style="background-color: #1a1c24; border: 1px solid #444;">
+                <span class="text-white fs-5">TOTAL A PAGAR</span>
+                <span class="text-success fs-3 fw-bold">$@Model.Total.ToString("N2")</span>
+            </div>
+
+            <div class="text-center mt-4">
+                <p class="text-muted small mb-0">¡Gracias por su compra!</p>
+                <small class="text-muted" style="font-size: 0.7rem;">Este documento es un comprobante simplificado.</small>
+            </div>
+
+        </div>
+
+        <!-- Adorno final -->
+        <div class="card-footer" style="background-color: var(--primary); height: 10px; padding: 0;"></div>
+    </div>
+</div>

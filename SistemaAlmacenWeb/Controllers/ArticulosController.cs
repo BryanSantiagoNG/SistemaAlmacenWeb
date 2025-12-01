@@ -9,6 +9,7 @@ using SistemaAlmacenWeb.Models;
 
 namespace SistemaAlmacenWeb.Controllers
 {
+
     public class ArticulosController : Controller
     {
         private readonly SistemaAlmacenContext _context;
@@ -109,7 +110,28 @@ namespace SistemaAlmacenWeb.Controllers
             ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre", articulo.IdProveedor);
             return View(articulo);
         }
+        // GET: Articulos/GetJson
+        // Este método será llamado por el JavaScript
+        [HttpGet]
+        public async Task<IActionResult> GetJson()
+        {
+            var articulos = await _context.Articulos
+                .Include(a => a.Proveedor)
+                .Select(a => new {
+                    // Proyectamos solo lo necesario para el JS
+                    idArticulo = a.IdArticulo,
+                    codigo = a.CodigoInterno,
+                    codigoBarras = a.CodigoBarras,
+                    descripcion = a.Descripcion,
+                    marca = a.Marca,
+                    stock = a.Cantidad,
+                    precioVenta = a.PrecioVenta,
+                    proveedor = a.Proveedor != null ? a.Proveedor.Nombre : "Sin Asignar"
+                })
+                .ToListAsync();
 
+            return Json(articulos);
+        }
         // POST: Articulos/Edit/5
         // Guarda los cambios de la edición
         [HttpPost]
@@ -169,7 +191,19 @@ namespace SistemaAlmacenWeb.Controllers
 
             return View(articulo);
         }
-
+        [HttpPost]
+        [Route("Articulos/DeleteConfirmedApi/{id}")] // Ruta específica para la API
+        public async Task<IActionResult> DeleteConfirmedApi(int id)
+        {
+            var articulo = await _context.Articulos.FindAsync(id);
+            if (articulo != null)
+            {
+                _context.Articulos.Remove(articulo);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            return NotFound();
+        }
         // POST: Articulos/Delete/5
         // Ejecuta el borrado real
         [HttpPost, ActionName("Delete")]

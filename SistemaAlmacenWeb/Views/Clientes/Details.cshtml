@@ -1,52 +1,151 @@
 ﻿@model SistemaAlmacenWeb.Models.Cliente
 
 @{
-    ViewData["Title"] = "Detalles";
+    ViewData["Title"] = "Perfil de Cliente";
 }
 
-<h1>Detalles del Cliente</h1>
+<div class="container mt-4">
+    <div class="card shadow-lg border-0">
 
-<div>
-    <h4>Información General</h4>
-    <hr />
-    <dl class="row">
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Nombre)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Nombre)
-        </dd>
+        <!-- ENCABEZADO CON FONDO ROJO -->
+        <div class="card-header p-4 d-flex justify-content-between align-items-center"
+             style="background-color: var(--primary); color: white;">
+            <div>
+                <h2 class="mb-0 fw-bold text-uppercase">
+                    <i class="fas fa-user-circle me-2"></i> @Model.Nombre
+                </h2>
+                <span class="badge bg-dark border border-light mt-2">ID Cliente: @Model.IdCliente</span>
+            </div>
+            <div class="text-end d-none d-md-block">
+                <i class="fas fa-address-card fa-4x opacity-50"></i>
+            </div>
+        </div>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.RFC)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.RFC)
-        </dd>
+        <div class="card-body p-4" style="background-color: var(--surface);">
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Direccion)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Direccion)
-        </dd>
+            <!-- FILA 1: DATOS DE CONTACTO -->
+            <div class="row g-4">
+                <!-- Columna Izquierda: Datos Fiscales -->
+                <div class="col-md-6">
+                    <div class="p-3 rounded h-100" style="background-color: #1a1c24; border: 1px solid #444;">
+                        <h5 class="text-white border-bottom border-secondary pb-2 mb-3">
+                            <i class="fas fa-info-circle text-warning me-2"></i>Información Fiscal
+                        </h5>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Telefono)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Telefono)
-        </dd>
+                        <div class="mb-3">
+                            <label class="text-muted small">RFC</label>
+                            <p class="text-white fs-5 fw-bold mb-0">
+                                @(string.IsNullOrEmpty(Model.RFC) ? "No registrado" : Model.RFC)
+                            </p>
+                        </div>
 
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.IdCliente" class="btn btn-warning">Editar</a>
-    <a asp-action="Index" class="btn btn-secondary">Volver a la Lista</a>
+                        <div>
+                            <label class="text-muted small">DIRECCIÓN</label>
+                            <p class="text-white mb-0">
+                                <i class="fas fa-map-marker-alt text-danger me-2"></i>
+                                @(string.IsNullOrEmpty(Model.Direccion) ? "Sin dirección" : Model.Direccion)
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Columna Derecha: Contacto -->
+                <div class="col-md-6">
+                    <div class="p-3 rounded h-100" style="background-color: #1a1c24; border: 1px solid #444;">
+                        <h5 class="text-white border-bottom border-secondary pb-2 mb-3">
+                            <i class="fas fa-address-book text-info me-2"></i>Contacto
+                        </h5>
+
+                        <div class="mb-3">
+                            <label class="text-muted small">TELÉFONO</label>
+                            <p class="text-white fs-5 mb-0">
+                                @if (!string.IsNullOrEmpty(Model.Telefono))
+                                {
+                                    <a href="tel:@Model.Telefono" class="text-decoration-none text-white">
+                                        <i class="fas fa-phone text-success me-2"></i>@Model.Telefono
+                                    </a>
+                                }
+                                else
+                                {
+
+                                    <span>--</span>
+                                }
+                            </p>
+                        </div>
+
+                        <div>
+                            <label class="text-muted small">CORREO ELECTRÓNICO</label>
+                            <p class="mb-0">
+                                @if (!string.IsNullOrEmpty(Model.Email))
+                                {
+                                    <a href="mailto:@Model.Email" style="color: #4ade80; text-decoration: none;">
+                                        <i class="fas fa-envelope me-2"></i>@Model.Email
+                                    </a>
+                                }
+                                else
+                                {
+
+                                    <span class="text-white">--</span>
+                                }
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILA 2: HISTORIAL DE COMPRAS -->
+            <div class="mt-5">
+                <h4 class="text-white mb-3"><i class="fas fa-history me-2"></i>Historial de Compras</h4>
+
+                @if (Model.Facturas != null && Model.Facturas.Count > 0)
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle border border-secondary">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Folio</th>
+                                    <th>Fecha</th>
+                                    <th class="text-end">Total</th>
+                                    <th class="text-end">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var factura in Model.Facturas.OrderByDescending(f => f.Fecha))
+                                {
+                                    <tr>
+                                        <td><span class="badge bg-secondary">#@factura.IdFactura</span></td>
+                                        <td class="text-white">@factura.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td class="text-end text-success fw-bold">$@factura.Total.ToString("N2")</td>
+                                        <td class="text-end">
+                                            <a asp-controller="Facturas" asp-action="Details" asp-route-id="@factura.IdFactura" class="btn btn-sm btn-light text-primary">
+                                                <i class="fas fa-eye"></i> Ver Ticket
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="alert alert-dark border-secondary text-center">
+                        <i class="fas fa-shopping-basket fa-2x mb-2 text-muted"></i>
+                        <p class="text-muted mb-0">Este cliente aún no ha realizado compras.</p>
+                    </div>
+                }
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="card-footer p-3 d-flex justify-content-between" style="background-color: #1a1c24; border-top: 1px solid #444;">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Volver
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model?.IdCliente" class="btn btn-warning fw-bold text-dark">
+                <i class="fas fa-pen me-2"></i> Editar Datos
+            </a>
+        </div>
+    </div>
 </div>

@@ -1,0 +1,81 @@
+﻿@{
+    ViewData["Title"] = "Pedidos de Compra";
+}
+
+<div class="card p-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="mb-0 text-uppercase text-light">
+                <i class="fas fa-truck-loading me-2"></i> Historial de Pedidos
+            </h2>
+            <small class="text-muted">Gestión de compras a proveedores</small>
+        </div>
+        <a asp-action="Create" class="btn btn-primary btn-lg shadow">
+            <i class="fas fa-cart-plus me-2"></i> Nuevo Pedido
+        </a>
+    </div>
+
+    <div class="table-responsive">
+        <table id="tablaPedidos" class="table table-hover align-middle">
+            <thead>
+                <tr>
+                    <th># Pedido</th>
+                    <th>Fecha</th>
+                    <th>Proveedor</th>
+                    <th>Estado</th>
+                    <th>Total</th>
+                    <th class="text-end">Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- EL JAVASCRIPT LLENARÁ ESTO AUTOMÁTICAMENTE -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Importamos SweetAlert y nuestro Motor JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/js/almacen-core.js"></script>
+
+    <script>
+        // 1. Configuramos el administrador de datos apuntando al método GetJson
+        const manager = new DataManager('/Pedidos/GetJson');
+
+        // 2. Definimos las columnas
+        const columnas = [
+            {
+                data: 'idPedido',
+                render: (i) => `<span class="badge bg-secondary">#${i.idPedido}</span>`
+            },
+            { data: 'fecha' },
+            {
+                data: 'proveedor',
+                render: (i) => `<strong class="text-light">${i.proveedor}</strong>`
+            },
+            {
+                data: 'estado',
+                render: (i) => `<span class="badge bg-success">${i.estado}</span>`
+            },
+            {
+                data: 'total',
+                render: (i) => `<span class="fw-bold" style="color: #4ade80;">$${i.total.toFixed(2)}</span>`
+            },
+            {
+                render: (i) => `
+                    <div class="text-end">
+                        <a href="/Pedidos/Details/${i.idPedido}" class="btn btn-sm btn-info text-white" title="Ver Detalles">
+                            <i class="fas fa-file-invoice me-1"></i> Detalles
+                        </a>
+                    </div>
+                `
+            }
+        ];
+
+        // 3. Cargar la tabla al iniciar
+        document.addEventListener("DOMContentLoaded", () => {
+            manager.loadTable('tablaPedidos', columnas);
+        });
+    </script>
+}

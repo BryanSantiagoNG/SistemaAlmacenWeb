@@ -1,0 +1,92 @@
+﻿@model SistemaAlmacenWeb.Models.Pedido
+
+@{
+    ViewData["Title"] = "Detalle Pedido";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg" style="border: 1px solid #444;">
+
+        <!-- ENCABEZADO: ROJO CORPORATIVO -->
+        <div class="card-header d-flex justify-content-between align-items-center"
+             style="background-color: var(--primary); color: white;">
+            <h4 class="mb-0 text-uppercase">
+                <i class="fas fa-file-invoice me-2"></i> Pedido #@Model.IdPedido
+            </h4>
+            <span class="badge bg-dark border border-light">@Model.Fecha.ToShortDateString()</span>
+        </div>
+
+        <div class="card-body" style="background-color: var(--surface);">
+
+            <!-- INFORMACIÓN DEL PROVEEDOR Y ESTADO -->
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="text-white border-bottom border-secondary pb-2">Proveedor</h5>
+
+                    <!-- Nombre en Verde Brillante -->
+                    <p class="fs-5 mb-0" style="color: #4ade80; font-weight: 500;">
+                        <i class="fas fa-truck me-2"></i> @Model.Proveedor.Nombre
+                    </p>
+
+                    <!-- CORRECCIÓN: Email en gris claro para que sea visible -->
+                    <small style="color: #cccccc; display: block; margin-top: 5px; font-size: 0.95rem;">
+                        <i class="fas fa-envelope me-1"></i> @(string.IsNullOrEmpty(Model.Proveedor.Email) ? "Sin correo registrado" : Model.Proveedor.Email)
+                    </small>
+                </div>
+
+                <div class="col-md-6 text-end">
+                    <h5 class="text-white border-bottom border-secondary pb-2">Estado</h5>
+                    <span class="badge bg-success fs-6 px-3 py-2">@Model.Estado</span>
+                </div>
+            </div>
+
+            <h5 class="mt-4 mb-3 text-white"><i class="fas fa-boxes me-2"></i>Productos Recibidos</h5>
+
+            <!-- TABLA DE DETALLES -->
+            <div class="table-responsive">
+                <table class="table table-bordered border-secondary mb-0">
+                    <thead>
+                        <!-- Encabezado oscuro -->
+                        <tr style="background-color: #111; color: white;">
+                            <th>Artículo</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-end">Costo Unit.</th>
+                            <th class="text-end">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @{
+                            decimal granTotal = 0;
+                        }
+                        @foreach (var item in Model.DetallePedidos)
+                        {
+                            var subtotal = item.Cantidad * item.PrecioUnitario;
+                            granTotal += subtotal;
+
+                            <!-- Filas oscuras con texto gris claro -->
+                            <tr style="background-color: #222; color: #ddd;">
+                                <td>@item.Articulo.Descripcion</td>
+                                <td class="text-center">@item.Cantidad</td>
+                                <td class="text-end">@item.PrecioUnitario.ToString("C2")</td>
+                                <td class="text-end fw-bold text-white">@subtotal.ToString("C2")</td>
+                            </tr>
+                        }
+                    </tbody>
+                    <tfoot>
+                        <!-- Pie de tabla oscuro con total verde -->
+                        <tr style="background-color: #1a1c24;">
+                            <td colspan="3" class="text-end fw-bold text-white text-uppercase">Total Compra:</td>
+                            <td class="text-end fw-bold fs-4" style="color: #4ade80;">@granTotal.ToString("C2")</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+
+        <div class="card-footer border-top border-secondary" style="background-color: #1a1c24;">
+            <a asp-action="Index" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i> Volver al Historial
+            </a>
+        </div>
+    </div>
+</div>
