@@ -31,24 +31,21 @@ namespace SistemaAlmacenWeb.Models
         [Display(Name = "Stock Actual")]
         public int Cantidad { get; set; }
 
-        // --- RELACIÓN CON PROVEEDORES ---
         [Display(Name = "Proveedor")]
         public int? IdProveedor { get; set; }
 
         [ForeignKey("IdProveedor")]
         public Proveedor Proveedor { get; set; }
 
-        // --- RELACIÓN CON DISTRIBUIDORES ---
         [Display(Name = "Distribuidor")]
         public int? IdDistribuidor { get; set; }
 
         [ForeignKey("IdDistribuidor")]
         public Distribuidor Distribuidor { get; set; }
 
-        // --- PRECIOS ---
         [Display(Name = "Precio de Compra")]
-        [Column(TypeName = "decimal(10, 2)")] // Define el formato en SQL
-        [DataType(DataType.Currency)]         // Le dice a la web que esto es dinero ($)
+        [Column(TypeName = "decimal(10, 2)")] 
+        [DataType(DataType.Currency)]    
         public decimal PrecioCompra { get; set; }
 
         [Display(Name = "Precio de Venta")]

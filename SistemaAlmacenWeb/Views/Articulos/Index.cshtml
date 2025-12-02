@@ -1,32 +1,34 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+@{
     ViewData["Title"] = "Inventario";
+    var rol = HttpContextAccessor.HttpContext.Session.GetString("Rol");
 }
 
-<div class="card p-4">
+<div class="card p-4 shadow-sm border-0">
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap">
         <div>
-            <h2 class="mb-0 text-uppercase text-light"><i class="fas fa-boxes"></i> Inventario</h2>
+            <h2 class="mb-0 text-dark"><i class="fas fa-boxes text-primary"></i> Inventario</h2>
             <small class="text-muted">Consulta y gestión de productos</small>
         </div>
 
         <div class="d-flex gap-2 mt-2 mt-md-0">
-            <!-- BARRA DE BÚSQUEDA -->
             <div class="input-group">
-                <span class="input-group-text bg-dark border-secondary text-light">
-                    <i class="fas fa-search"></i>
-                </span>
-                <input type="text" id="txtBuscar" class="form-control" placeholder="Buscar producto..." style="min-width: 250px;">
+                <span class="input-group-text bg-white text-muted border-end-0"><i class="fas fa-search"></i></span>
+                <input type="text" id="txtBuscar" class="form-control border-start-0 ps-0" placeholder="Buscar producto..." style="min-width: 250px;">
             </div>
 
-            <a asp-action="Create" class="btn btn-primary shadow text-nowrap">
-                <i class="fas fa-plus-circle"></i> Nuevo
-            </a>
+            @if (rol == "Administrador")
+            {
+                <a asp-action="Create" class="btn btn-primary shadow-sm text-nowrap"><i class="fas fa-plus-circle"></i> Nuevo</a>
+            }
         </div>
     </div>
 
     <div class="table-responsive">
         <table id="tablaArticulos" class="table table-hover align-middle">
-            <thead>
+            <thead class="table-light">
                 <tr>
                     <th>Código</th>
                     <th>Descripción</th>
@@ -37,9 +39,7 @@
                     <th class="text-end">Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <!-- JS llenará esto -->
-            </tbody>
+            <tbody></tbody>
         </table>
     </div>
 </div>
@@ -51,63 +51,46 @@
     <script>
         const manager = new DataManager('/Articulos/GetJson');
 
+        const esAdmin = '@rol' === 'Administrador';
+
         const columnas = [
             {
                 data: 'codigo',
                 render: (i) => {
-                    let html = `<div class="d-flex flex-column align-items-start">`;
-                    html += `<span class="badge" style="background-color: #444;">${i.codigo || 'S/C'}</span>`;
-
-                    if(i.codigoBarras){
-                        html += `<small class="text-muted mt-1" style="font-size: 0.8rem;">
-                                    <i class="fas fa-barcode"></i> ${i.codigoBarras}
-                                 </small>`;
-                    }
-                    html += `</div>`;
-                    return html;
+                    let html = `<div class="d-flex flex-column align-items-start"><span class="badge bg-light text-dark border">${i.codigo || 'S/C'}</span>`;
+                    if(i.codigoBarras) html += `<small class="text-muted mt-1" style="font-size: 0.75rem;"><i class="fas fa-barcode"></i> ${i.codigoBarras}</small>`;
+                    html += `</div>`; return html;
                 }
             },
-            { data: 'descripcion', render: (i) => `<strong>${i.descripcion}</strong>` },
+            { data: 'descripcion', render: (i) => `<span class="fw-bold text-dark">${i.descripcion}</span>` },
             { data: 'marca' },
             {
                 data: 'stock',
                 render: (i) => {
                     let color = i.stock <= 5 ? 'danger' : 'success';
-                    return `<span class="badge bg-${color} p-2">${i.stock}</span>`;
+                    return `<span class="badge bg-${color}-subtle text-${color} border border-${color}">${i.stock}</span>`;
                 }
             },
             { data: 'precioVenta', render: (i) => `<span class="fw-bold text-success">$${i.precioVenta.toFixed(2)}</span>` },
-            { data: 'proveedor' },
+            { data: 'proveedor', render: (i) => `<span class="text-muted small">${i.proveedor}</span>` },
             {
-                render: (i) => `
-                    <div class="text-end">
-                        <!-- BOTONES CORREGIDOS: Fondo Blanco (btn-light) e Íconos de Color -->
-                        <div class="btn-group shadow-sm" role="group">
-                            <a href="/Articulos/Edit/${i.idArticulo}" class="btn btn-sm btn-light text-warning" title="Editar">
-                                <i class="fas fa-pen"></i>
-                            </a>
-                            <a href="/Articulos/Details/${i.idArticulo}" class="btn btn-sm btn-light text-info" title="Ver Detalles">
-                                <i class="fas fa-eye"></i>
-                            </a>
-                            <button onclick="borrar(${i.idArticulo})" class="btn btn-sm btn-light text-danger" title="Eliminar">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </div>
-                `
+                render: (i) => {
+                    let botones = `<div class="text-end"><div class="btn-group" role="group">`;
+
+                    if (esAdmin) botones += `<a href="/Articulos/Edit/${i.idArticulo}" class="btn btn-sm btn-outline-warning" title="Editar"><i class="fas fa-pen"></i></a>`;
+
+                    botones += `<a href="/Articulos/Details/${i.idArticulo}" class="btn btn-sm btn-outline-info" title="Ver Detalles"><i class="fas fa-eye"></i></a>`;
+
+                    if (esAdmin) botones += `<button onclick="borrar(${i.idArticulo})" class="btn btn-sm btn-outline-danger" title="Eliminar"><i class="fas fa-trash"></i></button>`;
+
+                    botones += `</div></div>`;
+                    return botones;
+                }
             }
         ];
 
-        document.addEventListener("DOMContentLoaded", () => {
-            manager.loadTable('tablaArticulos', columnas);
-        });
-
-        document.getElementById('txtBuscar').addEventListener('keyup', (e) => {
-            manager.search(e.target.value);
-        });
-
-        function borrar(id) {
-            manager.deleteItem(id);
-        }
+        document.addEventListener("DOMContentLoaded", () => { manager.loadTable('tablaArticulos', columnas); });
+        document.getElementById('txtBuscar').addEventListener('keyup', (e) => { manager.search(e.target.value); });
+        function borrar(id) { manager.deleteItem(id); }
     </script>
 }

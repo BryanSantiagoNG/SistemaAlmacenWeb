@@ -1,118 +1,103 @@
 ﻿@model SistemaAlmacenWeb.Models.Articulo
 
 @{
-    ViewData["Title"] = "Detalles del Artículo";
+    ViewData["Title"] = "Detalle Artículo";
 }
 
 <div class="container mt-4">
-    <div class="card shadow-lg" style="border: 1px solid #444;">
-
-        <!-- ENCABEZADO -->
-        <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #9f111b; color: white;">
-            <h4 class="mb-0 text-uppercase"><i class="fas fa-box-open me-2"></i> @Model.Descripcion</h4>
-            <span class="badge bg-dark border border-light">ID: @Model.IdArticulo</span>
+    <div class="card shadow-sm border-0">
+        <div class="card-header bg-white border-bottom py-3 d-flex justify-content-between align-items-center">
+            <h4 class="mb-0 text-primary">
+                <i class="fas fa-box-open me-2"></i> @Model.Descripcion
+            </h4>
+            <span class="badge bg-light text-dark border">ID: @Model.IdArticulo</span>
         </div>
 
-        <div class="card-body" style="background-color: #292c37; color: #ccc;">
+        <div class="card-body">
             <div class="row">
-                <!-- COLUMNA IZQUIERDA: DATOS -->
                 <div class="col-md-8">
-                    <h5 class="text-white border-bottom pb-2 mb-3">Información General</h5>
+                    <h5 class="text-muted border-bottom pb-2 mb-3">Información General</h5>
 
                     <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Código Interno:</div>
-                        <div class="col-sm-8">@Model.CodigoInterno</div>
+                        <div class="col-sm-4 fw-bold text-secondary">Código Interno:</div>
+                        <div class="col-sm-8 text-dark">@Model.CodigoInterno</div>
                     </div>
 
                     <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Marca:</div>
-                        <div class="col-sm-8">@Model.Marca</div>
+                        <div class="col-sm-4 fw-bold text-secondary">Marca:</div>
+                        <div class="col-sm-8 text-dark">@Model.Marca</div>
                     </div>
 
                     <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Stock Actual:</div>
+                        <div class="col-sm-4 fw-bold text-secondary">Stock Actual:</div>
                         <div class="col-sm-8">
                             @if (Model.Cantidad <= 5)
                             {
-                                <span class="badge bg-danger">@Model.Cantidad (Stock Bajo)</span>
+                                <span class="badge bg-danger-subtle text-danger border border-danger">@Model.Cantidad (Bajo)</span>
                             }
                             else
                             {
-                                <span class="badge bg-success">@Model.Cantidad Unidades</span>
+                                <span class="badge bg-success-subtle text-success border border-success">@Model.Cantidad Unidades</span>
                             }
                         </div>
                     </div>
 
                     <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Precio Compra:</div>
-                        <div class="col-sm-8">@Model.PrecioCompra.ToString("C2")</div>
-                    </div>
-
-                    <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Precio Venta:</div>
+                        <div class="col-sm-4 fw-bold text-secondary">Precio Venta:</div>
                         <div class="col-sm-8 fs-5 text-success fw-bold">@Model.PrecioVenta.ToString("C2")</div>
                     </div>
 
-                    <hr class="border-secondary" />
+                    <hr class="text-muted" />
 
                     <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Proveedor:</div>
-                        <div class="col-sm-8">
+                        <div class="col-sm-4 fw-bold text-secondary">Proveedor:</div>
+                        <div class="col-sm-8 text-dark">
                             @(Model.Proveedor != null ? Model.Proveedor.Nombre : "No asignado")
-                        </div>
-                    </div>
-                    <div class="row mb-2">
-                        <div class="col-sm-4 fw-bold text-white">Distribuidor:</div>
-                        <div class="col-sm-8">
-                            @(Model.Distribuidor != null ? Model.Distribuidor.Nombre : "No asignado")
                         </div>
                     </div>
                 </div>
 
-                <!-- COLUMNA DERECHA: CÓDIGO DE BARRAS VISUAL -->
-                <div class="col-md-4 text-center d-flex flex-column justify-content-center align-items-center border-start border-secondary">
-                    <h5 class="text-white mb-3">Código de Barras</h5>
+                <div class="col-md-4 text-center border-start">
+                    <h5 class="text-muted mb-3">Código de Barras</h5>
 
                     @if (!string.IsNullOrEmpty(Model.CodigoBarras))
                     {
-                        <div class="p-3 bg-white rounded">
-                            <!-- Aquí se dibujará el código -->
+                        <div class="p-3">
                             <svg id="barcode"></svg>
                         </div>
-                        <p class="mt-2 text-muted small">Escaneable</p>
+                        <p class="mt-2 text-muted small">@Model.CodigoBarras</p>
                     }
                     else
                     {
-                        <div class="alert alert-secondary">
-                            <i class="fas fa-exclamation-triangle"></i> Sin código asignado
-                        </div>
+                        <div class="alert alert-light border">Sin código</div>
                     }
                 </div>
             </div>
         </div>
 
-        <div class="card-footer d-flex justify-content-between" style="background-color: #1a1c24; border-top: 1px solid #444;">
-            <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Volver</a>
-            <a asp-action="Edit" asp-route-id="@Model?.IdArticulo" class="btn btn-warning text-dark fw-bold"><i class="fas fa-pen"></i> Editar Artículo</a>
+        <div class="card-footer bg-light d-flex justify-content-between">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                <i class="fas fa-arrow-left"></i> Volver
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model?.IdArticulo" class="btn btn-warning text-dark">
+                <i class="fas fa-pen"></i> Editar
+            </a>
         </div>
     </div>
 </div>
 
 @section Scripts {
-    <!-- Librería para generar código de barras -->
     <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
-
     <script>
-        // Si existe un código de barras en el modelo, generamos el gráfico
         @if (!string.IsNullOrEmpty(Model.CodigoBarras))
         {
                 <text>
                 JsBarcode("#barcode", "@Model.CodigoBarras", {
-                    format: "CODE128", // Formato estándar
-                    lineColor: "#000", // Color de las barras
+                    format: "CODE128",
+                    lineColor: "#333", 
                     width: 2,
                     height: 60,
-                    displayValue: true // Muestra el número abajo de las barras
+                    displayValue: false
                 });
                 </text>
         }

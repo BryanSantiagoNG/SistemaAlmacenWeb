@@ -12,7 +12,6 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <!-- Fila 1: Códigos -->
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label asp-for="CodigoInterno" class="control-label"></label>
@@ -26,7 +25,6 @@
                 </div>
             </div>
 
-            <!-- Fila 2: Descripción y Marca -->
             <div class="mb-3">
                 <label asp-for="Descripcion" class="control-label"></label>
                 <input asp-for="Descripcion" class="form-control" />
@@ -46,7 +44,6 @@
                 </div>
             </div>
 
-            <!-- Fila 3: Relaciones (Comboboxes) -->
             <div class="row mb-3 p-3 bg-light border rounded">
                 <div class="col-md-6">
                     <label asp-for="IdProveedor" class="control-label fw-bold">Proveedor</label>
@@ -62,7 +59,6 @@
                 </div>
             </div>
 
-            <!-- Fila 4: Precios -->
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label asp-for="PrecioCompra" class="control-label"></label>

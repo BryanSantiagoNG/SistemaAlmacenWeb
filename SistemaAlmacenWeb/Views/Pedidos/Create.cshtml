@@ -3,7 +3,6 @@
 }
 
 <div class="row">
-    <!-- COLUMNA IZQUIERDA: FORMULARIO -->
     <div class="col-md-4">
         <div class="card p-3 mb-3 border-secondary">
             <h4 class="card-title text-light mb-3"><i class="fas fa-file-invoice"></i> Datos del Pedido</h4>
@@ -21,7 +20,6 @@
 
             <div class="form-group mb-2">
                 <label>Artículo</label>
-                <!-- Inicia deshabilitado hasta que elijan proveedor -->
                 <select id="cmbArticulo" class="form-select" disabled>
                     <option value="">-- Primero elija un proveedor --</option>
                 </select>
@@ -47,14 +45,12 @@
         </div>
     </div>
 
-    <!-- COLUMNA DERECHA: TABLA DE DETALLES -->
     <div class="col-md-8">
         <div class="card p-3 h-100 border-secondary" style="background-color: var(--surface);">
             <div class="d-flex justify-content-between align-items-center">
                 <h4 class="card-title text-light">Detalle de Compra</h4>
                 <div class="text-end">
                     <small class="text-muted d-block">Total Estimado</small>
-                    <!-- Color verde brillante para el precio -->
                     <h2 class="fw-bold m-0" id="lblTotal" style="color: #4ade80;">$0.00</h2>
                 </div>
             </div>
@@ -62,7 +58,6 @@
             <div class="table-responsive mt-3" style="max-height: 400px; overflow-y: auto;">
                 <table class="table align-middle">
                     <thead>
-                        <!-- Encabezado rojo oscuro -->
                         <tr style="background-color: var(--primary); color: white;">
                             <th>Producto</th>
                             <th>Costo</th>
@@ -72,7 +67,6 @@
                         </tr>
                     </thead>
                     <tbody id="tablaDetalles">
-                        <!-- JS llenará esto -->
                     </tbody>
                 </table>
             </div>
@@ -91,12 +85,10 @@
     <script>
         let listaProductos = [];
 
-        // 1. EVENTO: AL CAMBIAR PROVEEDOR -> CARGAR ARTÍCULOS
         document.getElementById("cmbProveedor").addEventListener("change", async function() {
             let idProv = this.value;
             let cmbArt = document.getElementById("cmbArticulo");
 
-            // Limpiar combo de artículos
             cmbArt.innerHTML = '<option value="">Cargando...</option>';
             cmbArt.value = "";
             document.getElementById("txtCosto").value = "";
@@ -107,7 +99,6 @@
                 return;
             }
 
-            // Petición al servidor
             try {
                 let response = await fetch(`/Pedidos/GetArticulosPorProveedor?idProveedor=${idProv}`);
                 let articulos = await response.json();
@@ -118,11 +109,10 @@
                     cmbArt.innerHTML = '<option value="">Este proveedor no tiene artículos asignados</option>';
                 } else {
                     articulos.forEach(art => {
-                        // Guardamos el precio en un atributo data-precio para no hacer otra consulta
                         let option = document.createElement("option");
                         option.value = art.id;
                         option.text = art.nombre;
-                        option.setAttribute("data-precio", art.precio); // TRUCO
+                        option.setAttribute("data-precio", art.precio); 
                         cmbArt.appendChild(option);
                     });
                     cmbArt.disabled = false;
@@ -132,10 +122,7 @@
                 cmbArt.innerHTML = '<option value="">Error al cargar</option>';
             }
         });
-
-        // 2. EVENTO: AL SELECCIONAR ARTÍCULO -> PONER PRECIO AUTOMÁTICO
         document.getElementById("cmbArticulo").addEventListener("change", function() {
-            // Obtenemos el precio del atributo data-precio que guardamos arriba
             let precio = this.options[this.selectedIndex].getAttribute("data-precio");
             if (precio) {
                 document.getElementById("txtCosto").value = parseFloat(precio).toFixed(2);
@@ -144,7 +131,6 @@
             }
         });
 
-        // 3. AGREGAR A LA TABLA VISUAL
         function agregarProducto() {
             let cmbArt = document.getElementById("cmbArticulo");
             let idArticulo = cmbArt.value;
@@ -162,7 +148,6 @@
                 return;
             }
 
-            // Evitar duplicados visuales (opcional, sumamos cantidad si ya existe)
             let existente = listaProductos.find(p => p.id === idArticulo);
             if (existente) {
                 existente.cantidad += cantidad;
@@ -170,7 +155,7 @@
             } else {
                 listaProductos.push({
                     id: idArticulo,
-                    nombre: nombreArt.split('-')[1] || nombreArt, // Limpiar texto para que se vea bien
+                    nombre: nombreArt.split('-')[1] || nombreArt, 
                     costo: costo,
                     cantidad: cantidad,
                     subtotal: costo * cantidad
@@ -179,14 +164,12 @@
 
             renderizarTabla();
 
-            // Resetear inputs pequeños
             cmbArt.value = "";
             document.getElementById("txtCosto").value = "";
             document.getElementById("txtCantidad").value = "1";
             cmbArt.focus();
         }
 
-        // 4. DIBUJAR TABLA
         function renderizarTabla() {
             let tbody = document.getElementById("tablaDetalles");
             tbody.innerHTML = "";
@@ -217,7 +200,6 @@
             renderizarTabla();
         }
 
-        // 5. GUARDAR EN BD
         async function guardarPedido() {
             let idProv = document.getElementById("cmbProveedor").value;
 

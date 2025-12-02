@@ -5,43 +5,39 @@
 }
 
 <div class="container mt-4">
-    <div class="card shadow-lg border-0">
-
-        <!-- ENCABEZADO CON FONDO ROJO -->
-        <div class="card-header p-4 d-flex justify-content-between align-items-center"
-             style="background-color: var(--primary); color: white;">
-            <div>
-                <h2 class="mb-0 fw-bold text-uppercase">
-                    <i class="fas fa-user-circle me-2"></i> @Model.Nombre
-                </h2>
-                <span class="badge bg-dark border border-light mt-2">ID Cliente: @Model.IdCliente</span>
-            </div>
-            <div class="text-end d-none d-md-block">
-                <i class="fas fa-address-card fa-4x opacity-50"></i>
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-header bg-white border-bottom py-4">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h2 class="mb-0 text-primary fw-bold">
+                        <i class="fas fa-user-circle me-2"></i> @Model.Nombre
+                    </h2>
+                    <span class="badge bg-light text-secondary border mt-2">ID Cliente: @Model.IdCliente</span>
+                </div>
+                <div class="text-end d-none d-md-block text-muted opacity-25">
+                    <i class="fas fa-address-card fa-4x"></i>
+                </div>
             </div>
         </div>
 
-        <div class="card-body p-4" style="background-color: var(--surface);">
-
-            <!-- FILA 1: DATOS DE CONTACTO -->
+        <div class="card-body p-4">
             <div class="row g-4">
-                <!-- Columna Izquierda: Datos Fiscales -->
                 <div class="col-md-6">
-                    <div class="p-3 rounded h-100" style="background-color: #1a1c24; border: 1px solid #444;">
-                        <h5 class="text-white border-bottom border-secondary pb-2 mb-3">
-                            <i class="fas fa-info-circle text-warning me-2"></i>Información Fiscal
+                    <div class="p-3 border rounded bg-light h-100">
+                        <h5 class="text-dark border-bottom pb-2 mb-3">
+                            <i class="fas fa-info-circle text-primary me-2"></i>Información Fiscal
                         </h5>
 
                         <div class="mb-3">
-                            <label class="text-muted small">RFC</label>
-                            <p class="text-white fs-5 fw-bold mb-0">
+                            <label class="text-muted small fw-bold">RFC</label>
+                            <p class="text-dark fs-5 mb-0">
                                 @(string.IsNullOrEmpty(Model.RFC) ? "No registrado" : Model.RFC)
                             </p>
                         </div>
 
                         <div>
-                            <label class="text-muted small">DIRECCIÓN</label>
-                            <p class="text-white mb-0">
+                            <label class="text-muted small fw-bold">DIRECCIÓN</label>
+                            <p class="text-dark mb-0">
                                 <i class="fas fa-map-marker-alt text-danger me-2"></i>
                                 @(string.IsNullOrEmpty(Model.Direccion) ? "Sin dirección" : Model.Direccion)
                             </p>
@@ -49,43 +45,42 @@
                     </div>
                 </div>
 
-                <!-- Columna Derecha: Contacto -->
                 <div class="col-md-6">
-                    <div class="p-3 rounded h-100" style="background-color: #1a1c24; border: 1px solid #444;">
-                        <h5 class="text-white border-bottom border-secondary pb-2 mb-3">
-                            <i class="fas fa-address-book text-info me-2"></i>Contacto
+                    <div class="p-3 border rounded bg-light h-100">
+                        <h5 class="text-dark border-bottom pb-2 mb-3">
+                            <i class="fas fa-address-book text-success me-2"></i>Contacto
                         </h5>
 
                         <div class="mb-3">
-                            <label class="text-muted small">TELÉFONO</label>
-                            <p class="text-white fs-5 mb-0">
+                            <label class="text-muted small fw-bold">TELÉFONO</label>
+                            <p class="fs-5 mb-0">
                                 @if (!string.IsNullOrEmpty(Model.Telefono))
                                 {
-                                    <a href="tel:@Model.Telefono" class="text-decoration-none text-white">
+                                    <a href="tel:@Model.Telefono" class="text-decoration-none text-dark">
                                         <i class="fas fa-phone text-success me-2"></i>@Model.Telefono
                                     </a>
                                 }
                                 else
                                 {
 
-                                    <span>--</span>
+                                    <span class="text-muted">--</span>
                                 }
                             </p>
                         </div>
 
                         <div>
-                            <label class="text-muted small">CORREO ELECTRÓNICO</label>
+                            <label class="text-muted small fw-bold">EMAIL</label>
                             <p class="mb-0">
                                 @if (!string.IsNullOrEmpty(Model.Email))
                                 {
-                                    <a href="mailto:@Model.Email" style="color: #4ade80; text-decoration: none;">
+                                    <a href="mailto:@Model.Email" class="text-decoration-none text-primary">
                                         <i class="fas fa-envelope me-2"></i>@Model.Email
                                     </a>
                                 }
                                 else
                                 {
 
-                                    <span class="text-white">--</span>
+                                    <span class="text-muted">--</span>
                                 }
                             </p>
                         </div>
@@ -93,15 +88,14 @@
                 </div>
             </div>
 
-            <!-- FILA 2: HISTORIAL DE COMPRAS -->
             <div class="mt-5">
-                <h4 class="text-white mb-3"><i class="fas fa-history me-2"></i>Historial de Compras</h4>
+                <h4 class="text-dark mb-3"><i class="fas fa-history text-secondary me-2"></i>Historial de Compras</h4>
 
                 @if (Model.Facturas != null && Model.Facturas.Count > 0)
                 {
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle border border-secondary">
-                            <thead class="table-dark">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-light">
                                 <tr>
                                     <th>Folio</th>
                                     <th>Fecha</th>
@@ -114,11 +108,11 @@
                                 {
                                     <tr>
                                         <td><span class="badge bg-secondary">#@factura.IdFactura</span></td>
-                                        <td class="text-white">@factura.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td>@factura.Fecha.ToString("dd/MM/yyyy HH:mm")</td>
                                         <td class="text-end text-success fw-bold">$@factura.Total.ToString("N2")</td>
                                         <td class="text-end">
-                                            <a asp-controller="Facturas" asp-action="Details" asp-route-id="@factura.IdFactura" class="btn btn-sm btn-light text-primary">
-                                                <i class="fas fa-eye"></i> Ver Ticket
+                                            <a asp-controller="Facturas" asp-action="Details" asp-route-id="@factura.IdFactura" class="btn btn-sm btn-outline-primary">
+                                                Ver Ticket
                                             </a>
                                         </td>
                                     </tr>
@@ -129,21 +123,19 @@
                 }
                 else
                 {
-                    <div class="alert alert-dark border-secondary text-center">
-                        <i class="fas fa-shopping-basket fa-2x mb-2 text-muted"></i>
-                        <p class="text-muted mb-0">Este cliente aún no ha realizado compras.</p>
+                    <div class="alert alert-light border text-center text-muted">
+                        <i class="fas fa-shopping-basket fa-2x mb-2"></i>
+                        <p class="mb-0">Este cliente aún no ha realizado compras.</p>
                     </div>
                 }
             </div>
-
         </div>
 
-        <!-- FOOTER -->
-        <div class="card-footer p-3 d-flex justify-content-between" style="background-color: #1a1c24; border-top: 1px solid #444;">
-            <a asp-action="Index" class="btn btn-secondary">
+        <div class="card-footer bg-white d-flex justify-content-between p-3">
+            <a asp-action="Index" class="btn btn-outline-secondary">
                 <i class="fas fa-arrow-left me-2"></i> Volver
             </a>
-            <a asp-action="Edit" asp-route-id="@Model?.IdCliente" class="btn btn-warning fw-bold text-dark">
+            <a asp-action="Edit" asp-route-id="@Model?.IdCliente" class="btn btn-warning text-dark fw-bold">
                 <i class="fas fa-pen me-2"></i> Editar Datos
             </a>
         </div>

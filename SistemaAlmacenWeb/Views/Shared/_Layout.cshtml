@@ -8,28 +8,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - ALMAXEN</title>
 
-    <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/SistemaAlmacenWeb.styles.css" asp-append-version="true" />
 
-    <!-- FontAwesome (Iconos) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
+
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
 
-                <!-- MARCA Y LOGO -->
                 <a class="navbar-brand d-flex align-items-center" asp-area="" asp-controller="Home" asp-action="Index">
-                    <!-- LOGO: Busca la imagen en wwwroot/img/logo.png -->
                     <img src="~/img/logo.png" alt="Logo" width="35" height="35" class="me-2 d-inline-block align-text-top"
-                         style="filter: drop-shadow(0 0 2px rgba(255,255,255,0.3)); object-fit: contain;"
-                         onerror="this.style.display='none'" />
-
-                    <!-- TEXTO ALMAXEN -->
-                    <span style="font-weight: 800; letter-spacing: 2px; font-size: 1.25rem; color: #ffffff;">ALMAXEN</span>
+                         style="object-fit: contain;" onerror="this.style.display='none'" />
+                    <span style="font-weight: 800; letter-spacing: 1px; font-size: 1.25rem; color: #0d6efd;">ALMAXEN</span>
                 </a>
 
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -39,18 +33,14 @@
 
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
 
-                    <!-- MENÚ IZQUIERDO (PRINCIPAL) -->
                     <ul class="navbar-nav flex-grow-1 ms-3">
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
                         </li>
 
-                        <!-- MENÚ DESPLEGABLE: CATÁLOGOS -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownCat" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Catálogos
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownCat">
+                            <a class="nav-link dropdown-toggle" href="#" id="dropCat" data-bs-toggle="dropdown">Catálogos</a>
+                            <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Articulos" asp-action="Index"><i class="fa fa-box me-2"></i> Artículos</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" asp-controller="Proveedores" asp-action="Index"><i class="fa fa-truck me-2"></i> Proveedores</a></li>
@@ -58,12 +48,9 @@
                             </ul>
                         </li>
 
-                        <!-- MENÚ DESPLEGABLE: OPERACIONES -->
                         <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdownOps" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                Operaciones
-                            </a>
-                            <ul class="dropdown-menu" aria-labelledby="navbarDropdownOps">
+                            <a class="nav-link dropdown-toggle" href="#" id="dropOps" data-bs-toggle="dropdown">Operaciones</a>
+                            <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" asp-controller="Ventas" asp-action="Index"><i class="fa fa-cash-register me-2"></i> Punto de Venta</a></li>
                                 <li><a class="dropdown-item" asp-controller="Facturas" asp-action="Index"><i class="fa fa-receipt me-2"></i> Historial Ventas</a></li>
                                 <li><hr class="dropdown-divider"></li>
@@ -71,23 +58,33 @@
                             </ul>
                         </li>
 
-                        <li class="nav-item">
-                            <a class="nav-link text-warning" asp-controller="Articulos" asp-action="Index"><i class="fa fa-search"></i> Consultas</a>
-                        </li>
+                        @if (HttpContextAccessor.HttpContext.Session.GetString("Rol") == "Administrador")
+                        {
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle text-danger fw-bold" href="#" id="dropAdmin" data-bs-toggle="dropdown">
+                                    <i class="fa fa-shield-alt"></i> Admin
+                                </a>
+                                <ul class="dropdown-menu border-danger">
+                                    <li>
+                                        <a class="dropdown-item text-danger" asp-controller="Usuarios" asp-action="Index">
+                                            <i class="fas fa-users-cog me-2"></i> Control de Usuarios
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        }
                     </ul>
 
-                    <!-- MENÚ DERECHO (USUARIO / LOGIN) -->
                     <ul class="navbar-nav">
                         @{
-                            // Recuperamos el nombre del usuario de la sesión actual
                             var nombreUsuario = HttpContextAccessor.HttpContext.Session.GetString("UsuarioNombre");
                         }
 
                         @if (!string.IsNullOrEmpty(nombreUsuario))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-light" asp-controller="Acceso" asp-action="Perfil" title="Ver Perfil">
-                                    Hola, <strong>@nombreUsuario</strong> <i class="fa fa-user-circle ms-1"></i>
+                                <a class="nav-link text-dark fw-bold" asp-controller="Acceso" asp-action="Perfil" title="Ver Perfil">
+                                    Hola, <span class="text-primary">@nombreUsuario</span> <i class="fa fa-user-circle ms-1"></i>
                                 </a>
                             </li>
                             <li class="nav-item">
@@ -99,7 +96,7 @@
                         else
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-white" asp-controller="Acceso" asp-action="Login">
+                                <a class="nav-link text-primary fw-bold" asp-controller="Acceso" asp-action="Login">
                                     <i class="fa fa-sign-in-alt me-1"></i> Iniciar Sesión
                                 </a>
                             </li>
@@ -116,9 +113,9 @@
         </main>
     </div>
 
-    <footer class="border-top footer text-muted bg-dark mt-auto py-3">
-        <div class="container text-center text-secondary">
-            &copy; 2024 - <strong>ALMAXEN</strong> - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-secondary">Privacidad</a>
+    <footer class="footer text-muted">
+        <div class="container text-center text-secondary small">
+            &copy; 2025 - <strong>ALMAXEN</strong> - <a asp-area="" asp-controller="Home" asp-action="Privacy" class="text-secondary text-decoration-none">Privacidad</a>
         </div>
     </footer>
 

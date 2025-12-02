@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaAlmacenWeb.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace SistemaAlmacenWeb.Controllers
 {
@@ -18,43 +16,32 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // GET: Clientes
+        private bool EsAdmin() => HttpContext.Session.GetString("Rol") == "Administrador";
+
         public async Task<IActionResult> Index()
         {
             return View(await _context.Clientes.ToListAsync());
         }
 
-        // GET: Clientes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Clientes == null)
-            {
-                return NotFound();
-            }
-
-            var cliente = await _context.Clientes
-                .Include(c => c.Facturas) // <--- AGREGAMOS ESTO PARA VER SUS COMPRAS
-                .FirstOrDefaultAsync(m => m.IdCliente == id);
-
-            if (cliente == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var cliente = await _context.Clientes.Include(c => c.Facturas).FirstOrDefaultAsync(m => m.IdCliente == id);
+            if (cliente == null) return NotFound();
             return View(cliente);
         }
 
-        // GET: Clientes/Create
         public IActionResult Create()
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             return View();
         }
 
-        // POST: Clientes/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdCliente,Nombre,RFC,Direccion,Telefono,Email")] Cliente cliente)
+        public async Task<IActionResult> Create(Cliente cliente)
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             if (ModelState.IsValid)
             {
                 _context.Add(cliente);
@@ -64,53 +51,44 @@ namespace SistemaAlmacenWeb.Controllers
             return View(cliente);
         }
 
-        // GET: Clientes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             if (id == null) return NotFound();
             var cliente = await _context.Clientes.FindAsync(id);
             if (cliente == null) return NotFound();
             return View(cliente);
         }
 
-        // POST: Clientes/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdCliente,Nombre,RFC,Direccion,Telefono,Email")] Cliente cliente)
+        public async Task<IActionResult> Edit(int id, Cliente cliente)
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             if (id != cliente.IdCliente) return NotFound();
-
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(cliente);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!_context.Clientes.Any(e => e.IdCliente == id)) return NotFound();
-                    else throw;
-                }
+                _context.Update(cliente);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(cliente);
         }
 
-        // GET: Clientes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             if (id == null) return NotFound();
             var cliente = await _context.Clientes.FirstOrDefaultAsync(m => m.IdCliente == id);
             if (cliente == null) return NotFound();
             return View(cliente);
         }
 
-        // POST: Clientes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             var cliente = await _context.Clientes.FindAsync(id);
             if (cliente != null)
             {

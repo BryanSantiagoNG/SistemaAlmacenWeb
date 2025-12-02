@@ -16,19 +16,17 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // 1. VISTA PRINCIPAL (HISTORIAL)
         public IActionResult Index()
         {
             return View();
         }
 
-        // 2. DATOS JSON PARA LA TABLA (Carga rápida)
         [HttpGet]
         public async Task<IActionResult> GetJson()
         {
             var facturas = await _context.Facturas
                 .Include(f => f.Cliente)
-                .OrderByDescending(f => f.Fecha) // Las más recientes primero
+                .OrderByDescending(f => f.Fecha) 
                 .Select(f => new {
                     idFactura = f.IdFactura,
                     fecha = f.Fecha.ToString("dd/MM/yyyy HH:mm"),
@@ -40,7 +38,6 @@ namespace SistemaAlmacenWeb.Controllers
             return Json(facturas);
         }
 
-        // 3. VISTA DE DETALLE (EL TICKET)
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();

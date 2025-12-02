@@ -4,14 +4,11 @@ namespace SistemaAlmacenWeb.Models
 {
     public class SistemaAlmacenContext : DbContext
     {
-        // ESTE CONSTRUCTOR ES OBLIGATORIO PARA QUE FUNCIONE EL GENERADOR
         public SistemaAlmacenContext(DbContextOptions<SistemaAlmacenContext> options)
             : base(options)
         {
         }
 
-        // Si tienes un método 'OnConfiguring' aquí abajo, BÓRRALO o COMÉNTALO.
-        // La conexión ya se está pasando desde Program.cs
 
         public DbSet<Usuario> Usuarios { get; set; }
         public DbSet<Proveedor> Proveedores { get; set; }

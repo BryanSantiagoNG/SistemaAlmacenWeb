@@ -16,21 +16,18 @@ namespace SistemaAlmacenWeb.Models
         [Display(Name = "Fecha de Emisión")]
         public DateTime Fecha { get; set; }
 
-        // --- RELACIÓN CON CLIENTE ---
         [Display(Name = "Cliente")]
         public int? IdCliente { get; set; }
 
         [ForeignKey("IdCliente")]
         public Cliente Cliente { get; set; }
 
-        // ----------------------------
 
         [Display(Name = "Total Factura")]
         [Column(TypeName = "decimal(10, 2)")]
         [DataType(DataType.Currency)]
         public decimal Total { get; set; }
 
-        // Lista de productos en la factura
         public ICollection<DetalleFactura> DetalleFacturas { get; set; }
     }
 }

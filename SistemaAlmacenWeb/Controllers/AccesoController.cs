@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SistemaAlmacenWeb.Models;
-using Microsoft.AspNetCore.Http; // Para usar Sesiones
+using Microsoft.AspNetCore.Http;
 using System.Linq;
 
 namespace SistemaAlmacenWeb.Controllers
@@ -14,10 +14,8 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // GET: Muestra la pantalla de Login
         public IActionResult Login()
         {
-            // Si ya está logueado, mandar al inicio
             if (HttpContext.Session.GetString("UsuarioId") != null)
             {
                 return RedirectToAction("Index", "Home");
@@ -25,17 +23,14 @@ namespace SistemaAlmacenWeb.Controllers
             return View();
         }
 
-        // POST: Procesa el usuario y contraseña
         [HttpPost]
         public IActionResult Login(string usuario, string password)
         {
-            // Buscamos en la base de datos (Nota: En producción usa hash para passwords, aquí texto plano por simplicidad)
             var user = _context.Usuarios
                 .FirstOrDefault(u => u.UsuarioNombre == usuario && u.Contraseña == password);
 
             if (user != null)
             {
-                // Guardamos datos en sesión
                 HttpContext.Session.SetString("UsuarioId", user.IdUsuario.ToString());
                 HttpContext.Session.SetString("UsuarioNombre", user.UsuarioNombre);
                 HttpContext.Session.SetString("Rol", user.Rol ?? "Empleado");
@@ -49,17 +44,14 @@ namespace SistemaAlmacenWeb.Controllers
             }
         }
 
-        // GET: Cerrar Sesión
         public IActionResult Logout()
         {
-            HttpContext.Session.Clear(); // Borra todo
+            HttpContext.Session.Clear(); 
             return RedirectToAction("Login");
         }
 
-        // GET: Perfil de Usuario
         public IActionResult Perfil()
         {
-            // Verificar si hay sesión
             var idString = HttpContext.Session.GetString("UsuarioId");
             if (string.IsNullOrEmpty(idString)) return RedirectToAction("Login");
 

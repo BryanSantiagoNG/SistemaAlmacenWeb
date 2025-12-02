@@ -2,99 +2,67 @@
     ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center py-4">
-    <h1 class="display-4 fw-bold text-light">Bienvenido a ALMAXEN</h1>
-    <p class="text-muted fs-5">Seleccione una opción para comenzar a trabajar.</p>
+<div class="text-center py-5">
+    <h1 class="display-4 fw-bold text-dark">Bienvenido a ALMAXEN</h1>
+    <p class="text-muted fs-5">Seleccione una opción para comenzar.</p>
 </div>
 
-<hr class="border-secondary mb-5" />
-
-<!-- FILA 1: CATÁLOGOS -->
 <div class="row g-4 mb-4">
     <div class="col-md-4">
-        <div class="card text-center h-100 shadow hover-scale">
-            <div class="card-body py-4">
-                <i class="fas fa-boxes fa-3x text-primary mb-3"></i>
-                <h3 class="card-title text-light">Artículos</h3>
-                <p class="card-text text-muted">Administrar inventario, precios y existencias.</p>
-                <a asp-controller="Articulos" asp-action="Index" class="btn btn-outline-primary w-75 stretched-link">Ir a Inventario</a>
+        <div class="card text-center h-100 border-0 shadow-sm hover-scale">
+            <div class="card-body py-5">
+                <i class="fas fa-boxes fa-3x text-primary bg-light p-3 rounded-circle mb-3"></i>
+                <h3 class="card-title h4">Artículos</h3>
+                <a asp-controller="Articulos" asp-action="Index" class="btn btn-outline-primary stretched-link">Ir a Inventario</a>
             </div>
         </div>
     </div>
-
     <div class="col-md-4">
-        <div class="card text-center h-100 shadow hover-scale">
-            <div class="card-body py-4">
-                <i class="fas fa-users fa-3x text-success mb-3"></i>
-                <h3 class="card-title text-light">Clientes</h3>
-                <p class="card-text text-muted">Registrar y gestionar cartera de clientes.</p>
-                <a asp-controller="Clientes" asp-action="Index" class="btn btn-outline-success w-75 stretched-link">Ver Clientes</a>
+        <div class="card text-center h-100 border-0 shadow-sm hover-scale">
+            <div class="card-body py-5">
+                <i class="fas fa-users fa-3x text-success bg-light p-3 rounded-circle mb-3"></i>
+                <h3 class="card-title h4">Clientes</h3>
+                <a asp-controller="Clientes" asp-action="Index" class="btn btn-outline-success stretched-link">Ver Clientes</a>
             </div>
         </div>
     </div>
-
     <div class="col-md-4">
-        <div class="card text-center h-100 shadow hover-scale">
-            <div class="card-body py-4">
-                <i class="fas fa-truck fa-3x text-info mb-3"></i>
-                <h3 class="card-title text-light">Proveedores</h3>
-                <p class="card-text text-muted">Gestionar proveedores y catálogos.</p>
-                <a asp-controller="Proveedores" asp-action="Index" class="btn btn-outline-info w-75 stretched-link">Ver Proveedores</a>
+        <div class="card text-center h-100 border-0 shadow-sm hover-scale">
+            <div class="card-body py-5">
+                <i class="fas fa-truck fa-3x text-info bg-light p-3 rounded-circle mb-3"></i>
+                <h3 class="card-title h4">Proveedores</h3>
+                <a asp-controller="Proveedores" asp-action="Index" class="btn btn-outline-info stretched-link">Ver Proveedores</a>
             </div>
         </div>
     </div>
 </div>
 
-<!-- FILA 2: OPERACIONES -->
 <div class="row g-4">
-
-    <!-- VENTAS -->
     <div class="col-md-4">
-        <div class="card text-center h-100 shadow hover-scale border-warning" style="border-width: 1px;">
-            <div class="card-body py-4" style="background: linear-gradient(180deg, rgba(255,193,7,0.05) 0%, rgba(0,0,0,0) 100%);">
-                <i class="fas fa-cash-register fa-3x text-warning mb-3"></i>
-                <h3 class="card-title text-white">Punto de Venta</h3>
-                <p class="card-text text-muted">Realizar ventas de mostrador.</p>
-                <a asp-controller="Ventas" asp-action="Index" class="btn btn-warning w-75 text-dark fw-bold stretched-link">Nueva Venta</a>
+        <div class="card text-center h-100 border-0 shadow-sm hover-scale">
+            <div class="card-body py-5">
+                <i class="fas fa-cash-register fa-3x text-warning bg-light p-3 rounded-circle mb-3"></i>
+                <h3 class="card-title h4">Punto de Venta</h3>
+                <a asp-controller="Ventas" asp-action="Index" class="btn btn-warning text-dark fw-bold stretched-link">Nueva Venta</a>
             </div>
         </div>
     </div>
-
-    <!-- PEDIDOS -->
     <div class="col-md-4">
-        <div class="card text-center h-100 shadow hover-scale">
-            <div class="card-body py-4">
-                <i class="fas fa-clipboard-list fa-3x text-light mb-3"></i>
-                <h3 class="card-title text-light">Compras / Pedidos</h3>
-                <p class="card-text text-muted">Reabastecer almacén.</p>
-                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-light w-75 stretched-link">Nuevo Pedido</a>
+        <div class="card text-center h-100 border-0 shadow-sm hover-scale">
+            <div class="card-body py-5">
+                <i class="fas fa-clipboard-list fa-3x text-secondary bg-light p-3 rounded-circle mb-3"></i>
+                <h3 class="card-title h4">Pedidos</h3>
+                <a asp-controller="Pedidos" asp-action="Index" class="btn btn-outline-secondary stretched-link">Nuevo Pedido</a>
             </div>
         </div>
     </div>
-
-    <!-- HISTORIAL (EL NUEVO) -->
     <div class="col-md-4">
-        <div class="card text-center h-100 shadow hover-scale">
-            <div class="card-body py-4">
-                <i class="fas fa-receipt fa-3x text-danger mb-3"></i> <!-- Icono Rojo -->
-                <h3 class="card-title text-light">Historial Ventas</h3>
-                <p class="card-text text-muted">Consultar facturas y tickets.</p>
-                <a asp-controller="Facturas" asp-action="Index" class="btn btn-outline-danger w-75 stretched-link">Ver Facturas</a>
+        <div class="card text-center h-100 border-0 shadow-sm hover-scale">
+            <div class="card-body py-5">
+                <i class="fas fa-receipt fa-3x text-danger bg-light p-3 rounded-circle mb-3"></i>
+                <h3 class="card-title h4">Historial</h3>
+                <a asp-controller="Facturas" asp-action="Index" class="btn btn-outline-danger stretched-link">Ver Facturas</a>
             </div>
         </div>
     </div>
-
 </div>
-
-<!-- Estilo extra para animación hover en las tarjetas -->
-<style>
-    .hover-scale {
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-
-        .hover-scale:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.5) !important;
-            border-color: var(--primary);
-        }
-</style>

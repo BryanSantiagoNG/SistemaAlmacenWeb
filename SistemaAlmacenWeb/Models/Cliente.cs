@@ -13,26 +13,26 @@ namespace SistemaAlmacenWeb.Models
         [Required(ErrorMessage = "El nombre es obligatorio")]
         [MaxLength(100)]
         [Display(Name = "Nombre Completo / Razón Social")]
-        public string Nombre { get; set; } // Este se queda igual, es Required
+        public string Nombre { get; set; }
 
         [MaxLength(20)]
         [Display(Name = "RFC")]
-        public string? RFC { get; set; } // <--- AGREGAR EL ?
+        public string? RFC { get; set; }
 
         [MaxLength(200)]
         [Display(Name = "Dirección")]
-        public string? Direccion { get; set; } // <--- AGREGAR EL ?
+        public string? Direccion { get; set; }
 
         [MaxLength(20)]
         [Display(Name = "Teléfono")]
         [DataType(DataType.PhoneNumber)]
-        public string? Telefono { get; set; } // <--- AGREGAR EL ?
+        public string? Telefono { get; set; } 
 
         [MaxLength(100)]
         [Display(Name = "Correo Electrónico")]
         [EmailAddress]
-        public string? Email { get; set; } // <--- AGREGAR EL ?
+        public string? Email { get; set; }
 
-        public ICollection<Factura>? Facturas { get; set; } // También aquí por si acaso
+        public ICollection<Factura>? Facturas { get; set; }
     }
 }

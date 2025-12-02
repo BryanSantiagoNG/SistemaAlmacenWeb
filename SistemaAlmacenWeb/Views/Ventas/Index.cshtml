@@ -5,108 +5,95 @@
 <div class="row">
     <!-- COLUMNA IZQUIERDA: CONTROLES -->
     <div class="col-lg-4 mb-3">
-        <div class="card p-3 shadow-sm h-100" style="background-color: var(--surface); border: 1px solid #444;">
+        <div class="card p-3 shadow-sm h-100 border-0">
 
-            <h4 class="text-light mb-3"><i class="fas fa-cash-register me-2"></i> Nueva Venta</h4>
+            <h4 class="text-primary mb-3"><i class="fas fa-cash-register me-2"></i> Nueva Venta</h4>
 
-            <!-- 1. SELECCIÓN DE CLIENTE -->
             <div class="form-group mb-4">
-                <label class="text-warning mb-1"><i class="fas fa-user"></i> Cliente</label>
+                <label class="text-muted small fw-bold mb-1">CLIENTE</label>
                 <div class="input-group">
                     <select id="cmbCliente" class="form-select" asp-items="ViewBag.IdCliente"></select>
-                    <button class="btn btn-outline-secondary" type="button" title="Nuevo Cliente" onclick="window.open('/Clientes/Create', '_blank')">
+                    <button class="btn btn-outline-secondary" type="button" onclick="window.open('/Clientes/Create', '_blank')">
                         <i class="fas fa-plus"></i>
                     </button>
                 </div>
             </div>
 
-            <hr class="border-secondary" />
+            <hr />
 
-            <!-- 2. AGREGAR PRODUCTO -->
             <div class="form-group mb-3">
-                <label class="text-light mb-1">Buscar Artículo</label>
+                <label class="text-muted small fw-bold mb-1">BUSCAR ARTÍCULO</label>
                 <select id="cmbArticulo" class="form-select" asp-items="ViewBag.IdArticulo">
-                    <option value="">-- Seleccione o Escanee --</option>
+                    <option value="">-- Seleccione --</option>
                 </select>
             </div>
 
             <div class="row">
                 <div class="col-6 mb-3">
-                    <label class="text-muted small">Precio Unit.</label>
-                    <input type="text" id="txtPrecio" class="form-control text-end" readonly />
+                    <label class="text-muted small">Precio</label>
+                    <input type="text" id="txtPrecio" class="form-control text-end bg-light" readonly />
                 </div>
                 <div class="col-6 mb-3">
-                    <label class="text-muted small">Stock Disp.</label>
-                    <input type="text" id="txtStock" class="form-control text-center" readonly />
+                    <label class="text-muted small">Stock</label>
+                    <input type="text" id="txtStock" class="form-control text-center bg-light" readonly />
                 </div>
             </div>
 
             <div class="form-group mb-4">
-                <label class="text-light mb-1">Cantidad</label>
+                <label class="text-muted small fw-bold mb-1">CANTIDAD</label>
                 <div class="input-group">
-                    <button class="btn btn-secondary" onclick="ajustarCant(-1)"><i class="fas fa-minus"></i></button>
+                    <button class="btn btn-outline-secondary" onclick="ajustarCant(-1)">-</button>
                     <input type="number" id="txtCantidad" class="form-control text-center fw-bold" value="1" min="1" />
-                    <button class="btn btn-secondary" onclick="ajustarCant(1)"><i class="fas fa-plus"></i></button>
+                    <button class="btn btn-outline-secondary" onclick="ajustarCant(1)">+</button>
                 </div>
             </div>
 
-            <button class="btn btn-warning w-100 fw-bold text-dark" onclick="agregarAlCarrito()">
-                <i class="fas fa-cart-plus me-2"></i> AGREGAR PRODUCTO
+            <button class="btn btn-primary w-100 py-2 shadow-sm" onclick="agregarAlCarrito()">
+                AGREGAR PRODUCTO <i class="fas fa-chevron-right ms-1"></i>
             </button>
         </div>
     </div>
 
-    <!-- COLUMNA DERECHA: TICKET / CARRITO -->
+    <!-- COLUMNA DERECHA: TICKET -->
     <div class="col-lg-8">
-        <div class="card h-100 d-flex flex-column" style="background-color: var(--surface); border: 1px solid #444;">
-
-            <!-- Encabezado del Ticket -->
-            <div class="card-header d-flex justify-content-between align-items-center" style="background-color: #1a1c24; border-bottom: 2px solid var(--primary);">
-                <span class="text-light fw-bold">RESUMEN DE VENTA</span>
-                <span class="badge bg-danger" id="lblItems">0 Items</span>
+        <div class="card h-100 shadow-sm border-0">
+            <div class="card-header bg-light border-bottom d-flex justify-content-between align-items-center">
+                <span class="fw-bold text-dark">RESUMEN DE VENTA</span>
+                <span class="badge bg-secondary" id="lblItems">0 Items</span>
             </div>
 
-            <!-- Tabla Scrollable -->
             <div class="card-body p-0 table-responsive" style="max-height: 400px; overflow-y: auto;">
-                <table class="table table-hover align-middle mb-0">
-                    <thead class="sticky-top" style="background-color: #111; color: white;">
+                <table class="table table-striped align-middle mb-0">
+                    <thead class="bg-light sticky-top">
                         <tr>
                             <th>Descripción</th>
                             <th class="text-center">Cant.</th>
                             <th class="text-end">Precio</th>
                             <th class="text-end">Total</th>
-                            <th class="text-center"></th>
+                            <th></th>
                         </tr>
                     </thead>
-                    <tbody id="tablaCarrito">
-                        <!-- JS llenará esto -->
-                    </tbody>
+                    <tbody id="tablaCarrito"></tbody>
                 </table>
 
-                <!-- Mensaje si está vacío -->
                 <div id="msgVacio" class="text-center p-5 text-muted">
-                    <i class="fas fa-shopping-cart fa-3x mb-3 opacity-25"></i>
+                    <i class="fas fa-shopping-cart fa-3x mb-3 text-secondary opacity-25"></i>
                     <p>El carrito está vacío</p>
                 </div>
             </div>
 
-            <!-- Totales y Botón Final -->
-            <div class="card-footer p-4" style="background-color: #1a1c24; border-top: 1px solid #444;">
+            <div class="card-footer bg-white p-4">
                 <div class="d-flex justify-content-between align-items-end mb-3">
-                    <div>
-                        <small class="text-muted d-block">TOTAL A PAGAR</small>
-                        <h1 class="text-success fw-bold m-0 display-4" id="lblTotal">$0.00</h1>
-                    </div>
-                    <div class="text-end">
-                        <button class="btn btn-outline-danger btn-sm mb-2" onclick="limpiarCarrito()">
-                            <i class="fas fa-trash"></i> Limpiar Todo
-                        </button>
-                    </div>
+                    <span class="text-muted fw-bold">TOTAL A PAGAR</span>
+                    <h1 class="text-success fw-bold m-0" id="lblTotal">$0.00</h1>
                 </div>
 
-                <button class="btn btn-success w-100 btn-lg shadow fw-bold" onclick="finalizarVenta()">
-                    <i class="fas fa-check-circle me-2"></i> COBRAR E IMPRIMIR
-                </button>
+                <div class="d-flex gap-2">
+                    <button class="btn btn-outline-danger" onclick="limpiarCarrito()">Limpiar</button>
+                    <button class="btn btn-success flex-grow-1 shadow-sm" onclick="finalizarVenta()">
+                        <i class="fas fa-check-circle me-2"></i> COBRAR
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -114,217 +101,118 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Incluimos Select2 para búsqueda inteligente en el combo si lo deseas (opcional, pero recomendado) -->
-
     <script>
-        // VARIABLES GLOBALES
-        let carrito = [];
-        let stockActual = 0;
+         // ... (La misma lógica JS de antes, solo que al pintar el HTML no uses clases 'text-white')
 
-        // 1. EVENTO: CAMBIO DE ARTÍCULO
-        document.getElementById("cmbArticulo").addEventListener("change", async function() {
-            let id = this.value;
-            if(!id) {
-                limpiarInputs();
-                return;
-            }
+         // Pega aquí la lógica JS del Punto de Venta
+         // Asegúrate de que en renderizarCarrito() el HTML sea así:
+         /*
+            `<tr>
+                <td class="fw-bold text-dark">${item.nombre}</td>
+                <td class="text-center">${item.cantidad}</td>
+                <td class="text-end">$${item.precio.toFixed(2)}</td>
+                <td class="text-end text-success fw-bold">$${item.total.toFixed(2)}</td>
+                <td class="text-center">
+                    <button class="btn btn-sm text-danger" onclick="eliminarItem(${index})"><i class="fas fa-times"></i></button>
+                </td>
+            </tr>`
+         */
 
-            try {
-                let response = await fetch('/Ventas/GetDatosArticulo/' + id);
-                if(response.ok) {
-                    let data = await response.json();
-                    document.getElementById("txtPrecio").value = "$" + data.precio.toFixed(2);
-                    document.getElementById("txtStock").value = data.stock;
-                    stockActual = data.stock;
-                    document.getElementById("txtCantidad").value = 1;
-                    document.getElementById("txtCantidad").focus();
-                }
-            } catch (err) { console.error(err); }
-        });
+        // ... Resto de la lógica JS ...
+         let carrito = [];
+         let stockActual = 0;
 
-        function limpiarInputs() {
-            document.getElementById("txtPrecio").value = "";
-            document.getElementById("txtStock").value = "";
-            stockActual = 0;
-            document.getElementById("txtCantidad").value = 1;
-        }
+         document.getElementById("cmbArticulo").addEventListener("change", async function() {
+             let id = this.value;
+             if(!id) { limpiarInputs(); return; }
+             try {
+                 let response = await fetch('/Ventas/GetDatosArticulo/' + id);
+                 if(response.ok) {
+                     let data = await response.json();
+                     document.getElementById("txtPrecio").value = "$" + data.precio.toFixed(2);
+                     document.getElementById("txtStock").value = data.stock;
+                     stockActual = data.stock;
+                     document.getElementById("txtCantidad").value = 1;
+                 }
+             } catch (err) { console.error(err); }
+         });
 
-        // 2. CONTROL DE CANTIDAD (+ / -)
-        function ajustarCant(valor) {
-            let input = document.getElementById("txtCantidad");
-            let actual = parseInt(input.value) || 0;
-            let nuevo = actual + valor;
-            if (nuevo >= 1) input.value = nuevo;
-        }
+         function limpiarInputs() {
+             document.getElementById("txtPrecio").value = "";
+             document.getElementById("txtStock").value = "";
+             stockActual = 0;
+             document.getElementById("txtCantidad").value = 1;
+         }
 
-        // 3. AGREGAR AL CARRITO
-        function agregarAlCarrito() {
-            let cmb = document.getElementById("cmbArticulo");
-            let id = cmb.value;
-            let texto = cmb.options[cmb.selectedIndex].text;
-            // Limpiamos el texto para dejar solo el nombre (quitamos precio y stock del string)
-            let nombreProducto = texto.split('-')[0].trim();
+         function ajustarCant(valor) {
+             let input = document.getElementById("txtCantidad");
+             let actual = parseInt(input.value) || 0;
+             let nuevo = actual + valor;
+             if (nuevo >= 1) input.value = nuevo;
+         }
 
-            let cantidad = parseInt(document.getElementById("txtCantidad").value);
-            let precioStr = document.getElementById("txtPrecio").value.replace('$', '');
-            let precio = parseFloat(precioStr);
+         function agregarAlCarrito() {
+             let cmb = document.getElementById("cmbArticulo");
+             let id = cmb.value;
+             let texto = cmb.options[cmb.selectedIndex].text;
+             let nombreProducto = texto.split('-')[0].trim();
+             let cantidad = parseInt(document.getElementById("txtCantidad").value);
+             let precio = parseFloat(document.getElementById("txtPrecio").value.replace('$', ''));
 
-            // Validaciones
-            if (!id || isNaN(precio)) {
-                Swal.fire({ title: "Seleccione un producto", icon: "warning", background: '#292c37', color: '#fff' });
-                return;
-            }
+             if (!id || isNaN(precio)) { Swal.fire("Error", "Seleccione un producto", "warning"); return; }
+             if (cantidad > stockActual) { Swal.fire("Stock", "No hay suficiente stock", "error"); return; }
 
-            if (cantidad > stockActual) {
-                Swal.fire({
-                    title: "Stock Insuficiente",
-                    text: `Solo quedan ${stockActual} unidades disponibles.`,
-                    icon: "error",
-                    background: '#292c37', color: '#fff'
-                });
-                return;
-            }
+             let existe = carrito.find(p => p.id === id);
+             if (existe) {
+                 if ((existe.cantidad + cantidad) > stockActual) { Swal.fire("Límite", "Stock insuficiente", "warning"); return; }
+                 existe.cantidad += cantidad;
+                 existe.total = existe.cantidad * existe.precio;
+             } else {
+                 carrito.push({ id, nombre: nombreProducto, precio, cantidad, total: precio * cantidad });
+             }
+             renderizarCarrito();
+             document.getElementById("txtCantidad").value = 1;
+         }
 
-            // Verificar si ya existe en carrito para sumar
-            let existe = carrito.find(p => p.id === id);
+         function renderizarCarrito() {
+             let tbody = document.getElementById("tablaCarrito");
+             let msg = document.getElementById("msgVacio");
+             tbody.innerHTML = "";
+             let granTotal = 0;
+             let totalItems = 0;
 
-            if (existe) {
-                // Validar que la suma no supere el stock
-                if ((existe.cantidad + cantidad) > stockActual) {
-                    Swal.fire("Stock Límite", "No puedes agregar más de lo disponible", "warning");
-                    return;
-                }
-                existe.cantidad += cantidad;
-                existe.total = existe.cantidad * existe.precio;
-            } else {
-                carrito.push({
-                    id: id,
-                    nombre: nombreProducto,
-                    precio: precio,
-                    cantidad: cantidad,
-                    total: precio * cantidad
-                });
-            }
+             if (carrito.length === 0) {
+                 msg.style.display = "block";
+                 document.getElementById("lblItems").innerText = "0 Items";
+                 document.getElementById("lblTotal").innerText = "$0.00";
+                 return;
+             }
+             msg.style.display = "none";
 
-            renderizarCarrito();
+             carrito.forEach((item, index) => {
+                 granTotal += item.total;
+                 totalItems += item.cantidad;
+                 tbody.innerHTML += `<tr><td class="fw-bold">${item.nombre}</td><td class="text-center">${item.cantidad}</td><td class="text-end">$${item.precio.toFixed(2)}</td><td class="text-end text-success fw-bold">$${item.total.toFixed(2)}</td><td class="text-center"><button class="btn btn-sm text-danger" onclick="eliminarItem(${index})"><i class="fas fa-times"></i></button></td></tr>`;
+             });
+             document.getElementById("lblTotal").innerText = "$" + granTotal.toFixed(2);
+             document.getElementById("lblItems").innerText = totalItems + " Items";
+         }
 
-            // Resetear solo cantidad para seguir vendiendo rápido
-            document.getElementById("txtCantidad").value = 1;
-            // Opcional: limpiar combo si prefieres
-            // cmb.value = ""; limpiarInputs();
-        }
+         function eliminarItem(index) { carrito.splice(index, 1); renderizarCarrito(); }
+         function limpiarCarrito() { carrito = []; renderizarCarrito(); }
 
-        // 4. DIBUJAR CARRITO
-        function renderizarCarrito() {
-            let tbody = document.getElementById("tablaCarrito");
-            let msg = document.getElementById("msgVacio");
-            tbody.innerHTML = "";
-            let granTotal = 0;
-            let totalItems = 0;
+         async function finalizarVenta() {
+             if (carrito.length === 0) return;
+             let idCliente = document.getElementById("cmbCliente").value;
+             const result = await Swal.fire({ title: '¿Cobrar?', icon: 'question', showCancelButton: true, confirmButtonText: 'Sí, cobrar' });
 
-            if (carrito.length === 0) {
-                msg.style.display = "block";
-                document.getElementById("lblItems").innerText = "0 Items";
-                document.getElementById("lblTotal").innerText = "$0.00";
-                return;
-            }
-
-            msg.style.display = "none";
-
-            carrito.forEach((item, index) => {
-                granTotal += item.total;
-                totalItems += item.cantidad;
-
-                tbody.innerHTML += `
-                    <tr>
-                        <td class="text-white fw-bold">${item.nombre}</td>
-                        <td class="text-center">
-                            <span class="badge bg-dark border border-secondary">${item.cantidad}</span>
-                        </td>
-                        <td class="text-end">$${item.precio.toFixed(2)}</td>
-                        <td class="text-end text-success fw-bold">$${item.total.toFixed(2)}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm text-danger p-0" onclick="eliminarItem(${index})" title="Quitar">
-                                <i class="fas fa-times-circle fa-lg"></i>
-                            </button>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            document.getElementById("lblTotal").innerText = "$" + granTotal.toFixed(2);
-            document.getElementById("lblItems").innerText = totalItems + " Items";
-        }
-
-        function eliminarItem(index) {
-            carrito.splice(index, 1);
-            renderizarCarrito();
-        }
-
-        function limpiarCarrito() {
-            if(carrito.length > 0) {
-                carrito = [];
-                renderizarCarrito();
-            }
-        }
-
-        // 5. FINALIZAR VENTA
-        async function finalizarVenta() {
-            if (carrito.length === 0) {
-                Swal.fire("Carrito Vacío", "Agregue productos antes de cobrar", "warning");
-                return;
-            }
-
-            let idCliente = document.getElementById("cmbCliente").value;
-
-            // Preguntar confirmación
-            const result = await Swal.fire({
-                title: '¿Procesar Venta?',
-                text: `Total a cobrar: ${document.getElementById("lblTotal").innerText}`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#198754',
-                cancelButtonColor: '#444',
-                confirmButtonText: 'Sí, Cobrar',
-                background: '#292c37', color: '#fff'
-            });
-
-            if (result.isConfirmed) {
-                // Preparar JSON
-                let ventaDTO = {
-                    IdCliente: parseInt(idCliente),
-                    Detalles: carrito.map(p => ({
-                        IdArticulo: parseInt(p.id),
-                        Cantidad: p.cantidad
-                    }))
-                };
-
-                // Enviar al servidor
-                try {
-                    let response = await fetch('/Ventas/ProcesarVenta', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(ventaDTO)
-                    });
-
-                    if (response.ok) {
-                        let data = await response.json();
-                        Swal.fire({
-                            title: "¡Venta Exitosa!",
-                            text: `Factura #${data.idFactura} generada.`,
-                            icon: "success",
-                            background: '#292c37', color: '#fff'
-                        }).then(() => {
-                            window.location.reload(); // Recargar para limpiar todo
-                        });
-                    } else {
-                        let msg = await response.text();
-                        Swal.fire("Error", msg, "error");
-                    }
-                } catch (err) {
-                    Swal.fire("Error", "Error de conexión con el servidor", "error");
-                }
-            }
-        }
+             if (result.isConfirmed) {
+                 let dto = { IdCliente: parseInt(idCliente), Detalles: carrito.map(p => ({ IdArticulo: parseInt(p.id), Cantidad: p.cantidad })) };
+                 let response = await fetch('/Ventas/ProcesarVenta', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(dto) });
+                 if (response.ok) {
+                     Swal.fire("Venta Exitosa", "", "success").then(() => window.location.reload());
+                 } else { Swal.fire("Error", "No se pudo procesar", "error"); }
+             }
+         }
     </script>
 }

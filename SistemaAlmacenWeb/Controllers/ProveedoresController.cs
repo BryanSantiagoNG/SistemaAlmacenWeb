@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaAlmacenWeb.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace SistemaAlmacenWeb.Controllers
 {
@@ -18,44 +16,33 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // GET: Proveedores
+        private bool EsAdmin() => HttpContext.Session.GetString("Rol") == "Administrador";
+
         public async Task<IActionResult> Index()
         {
             return View(await _context.Proveedores.ToListAsync());
         }
 
-        // GET: Proveedores/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Proveedores == null)
-            {
-                return NotFound();
-            }
-
-            // Aquí incluimos los Artículos para ver qué nos vende este proveedor
-            var proveedor = await _context.Proveedores
-                .Include(p => p.Articulos)
-                .FirstOrDefaultAsync(m => m.IdProveedor == id);
-
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var proveedor = await _context.Proveedores.Include(p => p.Articulos).FirstOrDefaultAsync(m => m.IdProveedor == id);
+            if (proveedor == null) return NotFound();
             return View(proveedor);
         }
 
-        // GET: Proveedores/Create
+
         public IActionResult Create()
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             return View();
         }
 
-        // POST: Proveedores/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdProveedor,Nombre,Telefono,Direccion,Email")] Proveedor proveedor)
+        public async Task<IActionResult> Create(Proveedor proveedor)
         {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             if (ModelState.IsValid)
             {
                 _context.Add(proveedor);
@@ -65,101 +52,51 @@ namespace SistemaAlmacenWeb.Controllers
             return View(proveedor);
         }
 
-        // GET: Proveedores/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Proveedores == null)
-            {
-                return NotFound();
-            }
-
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
+            if (id == null) return NotFound();
             var proveedor = await _context.Proveedores.FindAsync(id);
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
+            if (proveedor == null) return NotFound();
             return View(proveedor);
         }
 
-        // POST: Proveedores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdProveedor,Nombre,Telefono,Direccion,Email")] Proveedor proveedor)
+        public async Task<IActionResult> Edit(int id, Proveedor proveedor)
         {
-            if (id != proveedor.IdProveedor)
-            {
-                return NotFound();
-            }
-
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
+            if (id != proveedor.IdProveedor) return NotFound();
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(proveedor);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProveedorExists(proveedor.IdProveedor))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Update(proveedor);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             return View(proveedor);
         }
 
-        // GET: Proveedores/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null || _context.Proveedores == null)
-            {
-                return NotFound();
-            }
-
-            var proveedor = await _context.Proveedores
-                .Include(p => p.Articulos) // Incluimos artículos para advertir al usuario
-                .FirstOrDefaultAsync(m => m.IdProveedor == id);
-
-            if (proveedor == null)
-            {
-                return NotFound();
-            }
-
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
+            if (id == null) return NotFound();
+            var proveedor = await _context.Proveedores.FirstOrDefaultAsync(m => m.IdProveedor == id);
+            if (proveedor == null) return NotFound();
             return View(proveedor);
         }
 
-        // POST: Proveedores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Proveedores == null)
-            {
-                return Problem("Entity set 'SistemaAlmacenContext.Proveedores' is null.");
-            }
-
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
             var proveedor = await _context.Proveedores.FindAsync(id);
-
             if (proveedor != null)
             {
-                // Opcional: Validar si tiene artículos antes de borrar para evitar errores de FK
-                // Por ahora permitimos el borrado (dependerá de tu configuración de SQL ON DELETE)
                 _context.Proveedores.Remove(proveedor);
+                await _context.SaveChangesAsync();
             }
-
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool ProveedorExists(int id)
-        {
-            return (_context.Proveedores?.Any(e => e.IdProveedor == id)).GetValueOrDefault();
         }
     }
 }

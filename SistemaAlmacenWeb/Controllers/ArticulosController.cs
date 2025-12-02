@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaAlmacenWeb.Models;
+using Microsoft.AspNetCore.Http;
 
 namespace SistemaAlmacenWeb.Controllers
 {
-
     public class ArticulosController : Controller
     {
         private readonly SistemaAlmacenContext _context;
@@ -19,106 +19,21 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // GET: Articulos
-        // Muestra la lista completa incluyendo los nombres de Proveedor y Distribuidor
-        public async Task<IActionResult> Index()
+        private bool EsAdmin()
         {
-            var sistemaAlmacenContext = _context.Articulos
-                .Include(a => a.Distribuidor)
-                .Include(a => a.Proveedor);
-            return View(await sistemaAlmacenContext.ToListAsync());
+            return HttpContext.Session.GetString("Rol") == "Administrador";
         }
-
-        // GET: Articulos/Details/5
-        // Muestra el detalle de un solo artículo
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Index()
         {
-            if (id == null || _context.Articulos == null)
-            {
-                return NotFound();
-            }
-
-            var articulo = await _context.Articulos
-                .Include(a => a.Distribuidor)
-                .Include(a => a.Proveedor)
-                .FirstOrDefaultAsync(m => m.IdArticulo == id);
-
-            if (articulo == null)
-            {
-                return NotFound();
-            }
-
-            return View(articulo);
-        }
-
-        // GET: Articulos/Create
-        // Muestra el formulario vacío
-        public IActionResult Create()
-        {
-            // Llenamos los "ViewBag" para los menús desplegables (ComboBox)
-            // El primer parámetro es la lista, el segundo el ID (valor), el tercero el Nombre (texto a mostrar)
-
-            // Nota: Usamos _context.Set<Distribuidor>() por si no tienes el DbSet declarado explícitamente, 
-            // pero si tienes "public DbSet<Distribuidor> Distribuidores" usa _context.Distribuidores
-            ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre");
-            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre");
-
             return View();
         }
 
-        // POST: Articulos/Create
-        // Recibe los datos del formulario para guardar
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("IdArticulo,CodigoInterno,CodigoBarras,Descripcion,Marca,Cantidad,IdProveedor,IdDistribuidor,PrecioCompra,PrecioVenta")] Articulo articulo)
-        {
-            // Quitamos la validación de las propiedades de navegación para evitar errores falsos
-            // (El sistema a veces se queja de que el objeto "Proveedor" es null, aunque tengamos el "IdProveedor")
-            ModelState.Remove("Proveedor");
-            ModelState.Remove("Distribuidor");
-
-            if (ModelState.IsValid)
-            {
-                _context.Add(articulo);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-
-            // Si algo falla, recargamos las listas para que el usuario no pierda el menú
-            ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre", articulo.IdDistribuidor);
-            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre", articulo.IdProveedor);
-            return View(articulo);
-        }
-
-        // GET: Articulos/Edit/5
-        // Muestra el formulario con los datos cargados para editar
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.Articulos == null)
-            {
-                return NotFound();
-            }
-
-            var articulo = await _context.Articulos.FindAsync(id);
-            if (articulo == null)
-            {
-                return NotFound();
-            }
-
-            // Seleccionamos el valor actual en los menús desplegables
-            ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre", articulo.IdDistribuidor);
-            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre", articulo.IdProveedor);
-            return View(articulo);
-        }
-        // GET: Articulos/GetJson
-        // Este método será llamado por el JavaScript
         [HttpGet]
         public async Task<IActionResult> GetJson()
         {
             var articulos = await _context.Articulos
                 .Include(a => a.Proveedor)
                 .Select(a => new {
-                    // Proyectamos solo lo necesario para el JS
                     idArticulo = a.IdArticulo,
                     codigo = a.CodigoInterno,
                     codigoBarras = a.CodigoBarras,
@@ -129,41 +44,39 @@ namespace SistemaAlmacenWeb.Controllers
                     proveedor = a.Proveedor != null ? a.Proveedor.Nombre : "Sin Asignar"
                 })
                 .ToListAsync();
-
             return Json(articulos);
         }
-        // POST: Articulos/Edit/5
-        // Guarda los cambios de la edición
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+            var articulo = await _context.Articulos.Include(a => a.Proveedor).Include(a => a.Distribuidor).FirstOrDefaultAsync(m => m.IdArticulo == id);
+            if (articulo == null) return NotFound();
+            return View(articulo);
+        }
+
+
+        public IActionResult Create()
+        {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index)); 
+
+            ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre");
+            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre");
+            return View();
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("IdArticulo,CodigoInterno,CodigoBarras,Descripcion,Marca,Cantidad,IdProveedor,IdDistribuidor,PrecioCompra,PrecioVenta")] Articulo articulo)
+        public async Task<IActionResult> Create(Articulo articulo)
         {
-            if (id != articulo.IdArticulo)
-            {
-                return NotFound();
-            }
-
+            if (!EsAdmin()) return RedirectToAction(nameof(Index)); 
             ModelState.Remove("Proveedor");
             ModelState.Remove("Distribuidor");
 
             if (ModelState.IsValid)
             {
-                try
-                {
-                    _context.Update(articulo);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ArticuloExists(articulo.IdArticulo))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
+                _context.Add(articulo);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
             ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre", articulo.IdDistribuidor);
@@ -171,30 +84,45 @@ namespace SistemaAlmacenWeb.Controllers
             return View(articulo);
         }
 
-        // GET: Articulos/Delete/5
-        // Muestra la pantalla de confirmación de borrado
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Articulos == null)
-            {
-                return NotFound();
-            }
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
 
-            var articulo = await _context.Articulos
-                .Include(a => a.Distribuidor)
-                .Include(a => a.Proveedor)
-                .FirstOrDefaultAsync(m => m.IdArticulo == id);
-            if (articulo == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var articulo = await _context.Articulos.FindAsync(id);
+            if (articulo == null) return NotFound();
+            ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre", articulo.IdDistribuidor);
+            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre", articulo.IdProveedor);
             return View(articulo);
         }
+
         [HttpPost]
-        [Route("Articulos/DeleteConfirmedApi/{id}")] // Ruta específica para la API
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, Articulo articulo)
+        {
+            if (!EsAdmin()) return RedirectToAction(nameof(Index));
+
+            if (id != articulo.IdArticulo) return NotFound();
+            ModelState.Remove("Proveedor");
+            ModelState.Remove("Distribuidor");
+
+            if (ModelState.IsValid)
+            {
+                _context.Update(articulo);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            ViewData["IdDistribuidor"] = new SelectList(_context.Set<Distribuidor>(), "IdDistribuidor", "Nombre", articulo.IdDistribuidor);
+            ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre", articulo.IdProveedor);
+            return View(articulo);
+        }
+
+        [HttpPost]
+        [Route("Articulos/DeleteConfirmedApi/{id}")]
         public async Task<IActionResult> DeleteConfirmedApi(int id)
         {
+            if (!EsAdmin()) return Unauthorized();
+
             var articulo = await _context.Articulos.FindAsync(id);
             if (articulo != null)
             {
@@ -203,30 +131,6 @@ namespace SistemaAlmacenWeb.Controllers
                 return Ok();
             }
             return NotFound();
-        }
-        // POST: Articulos/Delete/5
-        // Ejecuta el borrado real
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.Articulos == null)
-            {
-                return Problem("Entity set 'SistemaAlmacenContext.Articulos' is null.");
-            }
-            var articulo = await _context.Articulos.FindAsync(id);
-            if (articulo != null)
-            {
-                _context.Articulos.Remove(articulo);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool ArticuloExists(int id)
-        {
-            return (_context.Articulos?.Any(e => e.IdArticulo == id)).GetValueOrDefault();
         }
     }
 }

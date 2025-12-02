@@ -31,7 +31,6 @@ namespace SistemaAlmacenWeb.Models
         [EmailAddress]
         public string Email { get; set; }
 
-        // Relación: Un distribuidor puede surtir muchos artículos
         public ICollection<Articulo> Articulos { get; set; }
     }
 }

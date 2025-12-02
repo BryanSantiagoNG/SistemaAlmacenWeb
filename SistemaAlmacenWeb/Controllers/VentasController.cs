@@ -18,18 +18,14 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // 1. VISTA PRINCIPAL (PUNTO DE VENTA)
         public IActionResult Index()
         {
-            // Cargar Clientes
             ViewData["IdCliente"] = new SelectList(_context.Clientes, "IdCliente", "Nombre");
 
-            // Cargar Artículos (Solo los que tienen stock > 0)
             var articulos = _context.Articulos
                 .Where(a => a.Cantidad > 0)
                 .Select(a => new {
                     Id = a.IdArticulo,
-                    // Texto que se ve en el combo: "Coca Cola - $15.00 (Disp: 100)"
                     Nombre = $"{a.Descripcion} - ${a.PrecioVenta} (Disp: {a.Cantidad})"
                 })
                 .ToList();
@@ -38,8 +34,6 @@ namespace SistemaAlmacenWeb.Controllers
 
             return View();
         }
-
-        // 2. API: OBTENER DATOS DE UN ARTÍCULO (PRECIO Y STOCK ACTUAL)
         [HttpGet]
         public async Task<IActionResult> GetDatosArticulo(int id)
         {
@@ -54,7 +48,6 @@ namespace SistemaAlmacenWeb.Controllers
             });
         }
 
-        // 3. PROCESAR VENTA (GUARDAR Y RESTAR STOCK)
         [HttpPost]
         public async Task<IActionResult> ProcesarVenta([FromBody] VentaDTO ventaData)
         {
@@ -65,12 +58,11 @@ namespace SistemaAlmacenWeb.Controllers
             {
                 try
                 {
-                    // A) Crear Factura
                     var nuevaFactura = new Factura
                     {
                         Fecha = DateTime.Now,
                         IdCliente = ventaData.IdCliente,
-                        Total = 0 // Lo calculamos abajo para seguridad
+                        Total = 0 
                     };
 
                     _context.Facturas.Add(nuevaFactura);
@@ -78,7 +70,6 @@ namespace SistemaAlmacenWeb.Controllers
 
                     decimal totalCalculado = 0;
 
-                    // B) Procesar Detalles
                     foreach (var item in ventaData.Detalles)
                     {
                         var articuloDB = await _context.Articulos.FindAsync(item.IdArticulo);
@@ -89,18 +80,16 @@ namespace SistemaAlmacenWeb.Controllers
                         if (articuloDB.Cantidad < item.Cantidad)
                             throw new Exception($"Stock insuficiente para {articuloDB.Descripcion}. Stock actual: {articuloDB.Cantidad}");
 
-                        // Crear Detalle
                         var detalle = new DetalleFactura
                         {
                             IdFactura = nuevaFactura.IdFactura,
                             IdArticulo = item.IdArticulo,
                             Cantidad = item.Cantidad,
-                            PrecioUnitario = articuloDB.PrecioVenta // Usamos precio de BD por seguridad
+                            PrecioUnitario = articuloDB.PrecioVenta 
                         };
 
                         _context.DetalleFacturas.Add(detalle);
 
-                        // RESTAR STOCK
                         articuloDB.Cantidad -= item.Cantidad;
 
                         totalCalculado += (detalle.Cantidad * detalle.PrecioUnitario);
@@ -120,8 +109,6 @@ namespace SistemaAlmacenWeb.Controllers
             }
         }
     }
-
-    // DTOs para recibir datos del JS
     public class VentaDTO
     {
         public int IdCliente { get; set; }

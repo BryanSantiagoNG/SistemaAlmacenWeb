@@ -16,7 +16,7 @@ namespace SistemaAlmacenWeb.Models
 
         [Required(ErrorMessage = "La contraseña es requerida")]
         [MaxLength(255)]
-        [DataType(DataType.Password)] // Esto hace que se vean puntitos (****) en la web
+        [DataType(DataType.Password)] 
         [Display(Name = "Contraseña")]
         public string Contraseña { get; set; }
 

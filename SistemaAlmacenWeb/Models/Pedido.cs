@@ -24,13 +24,11 @@ namespace SistemaAlmacenWeb.Models
         [Display(Name = "Estado")]
         public string? Estado { get; set; }
 
-        // --- CORRECCIÓN AQUÍ ---
         [Display(Name = "Proveedor")]
-        public int IdProveedor { get; set; } // La columna int de la BD
+        public int IdProveedor { get; set; } 
 
-        [ForeignKey("IdProveedor")] // <--- ESTA LÍNEA ES LA QUE ARREGLA EL ERROR
-        public Proveedor? Proveedor { get; set; } // El objeto de navegación
-        // -----------------------
+        [ForeignKey("IdProveedor")] 
+        public Proveedor? Proveedor { get; set; }
 
         public ICollection<DetallePedido>? DetallePedidos { get; set; }
     }

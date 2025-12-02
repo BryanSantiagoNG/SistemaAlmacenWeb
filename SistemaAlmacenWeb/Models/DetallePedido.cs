@@ -18,13 +18,11 @@ namespace SistemaAlmacenWeb.Models
         [DataType(DataType.Currency)]
         public decimal PrecioUnitario { get; set; }
 
-        // --- Relación con PEDIDO ---
         public int IdPedido { get; set; }
 
         [ForeignKey("IdPedido")]
         public Pedido Pedido { get; set; }
 
-        // --- Relación con ARTICULO ---
         public int IdArticulo { get; set; }
 
         [ForeignKey("IdArticulo")]

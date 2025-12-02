@@ -18,16 +18,16 @@ namespace SistemaAlmacenWeb.Models
         [MaxLength(20)]
         [Display(Name = "Teléfono")]
         [DataType(DataType.PhoneNumber)]
-        public string? Telefono { get; set; } // <--- Nullable
+        public string? Telefono { get; set; } 
 
         [MaxLength(200)]
         [Display(Name = "Dirección Física")]
-        public string? Direccion { get; set; } // <--- Nullable
+        public string? Direccion { get; set; } 
 
         [MaxLength(100)]
         [Display(Name = "Correo Electrónico")]
         [EmailAddress]
-        public string? Email { get; set; } // <--- Nullable
+        public string? Email { get; set; } 
 
         public ICollection<Articulo>? Articulos { get; set; }
         public ICollection<Pedido>? Pedidos { get; set; }

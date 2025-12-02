@@ -18,13 +18,10 @@ namespace SistemaAlmacenWeb.Controllers
             _context = context;
         }
 
-        // 1. VISTA PRINCIPAL (LISTADO)
         public IActionResult Index()
         {
             return View();
         }
-
-        // 2. DATOS JSON PARA LA TABLA (INDEX)
         [HttpGet]
         public async Task<IActionResult> GetJson()
         {
@@ -36,7 +33,6 @@ namespace SistemaAlmacenWeb.Controllers
                     fecha = p.Fecha.ToString("dd/MM/yyyy"),
                     proveedor = p.Proveedor.Nombre,
                     estado = p.Estado,
-                    // Calculamos el total sumando los detalles
                     total = p.DetallePedidos.Sum(d => d.Cantidad * d.PrecioUnitario)
                 })
                 .ToListAsync();
@@ -44,12 +40,10 @@ namespace SistemaAlmacenWeb.Controllers
             return Json(pedidos);
         }
 
-        // 3. VISTA PARA CREAR NUEVO PEDIDO
         public IActionResult Create()
         {
             ViewData["IdProveedor"] = new SelectList(_context.Proveedores, "IdProveedor", "Nombre");
 
-            // Enviamos los artículos con su precio de compra actual para referencia
             var articulos = _context.Articulos.Select(a => new {
                 Id = a.IdArticulo,
                 Nombre = $"{a.CodigoInterno} - {a.Descripcion} (Stock: {a.Cantidad})",
@@ -64,17 +58,16 @@ namespace SistemaAlmacenWeb.Controllers
         public async Task<IActionResult> GetArticulosPorProveedor(int idProveedor)
         {
             var articulos = await _context.Articulos
-                .Where(a => a.IdProveedor == idProveedor) // FILTRO CLAVE
+                .Where(a => a.IdProveedor == idProveedor) 
                 .Select(a => new {
                     id = a.IdArticulo,
                     nombre = $"{a.CodigoInterno} - {a.Descripcion} (Stock: {a.Cantidad})",
-                    precio = a.PrecioCompra // Mandamos el precio de una vez para no hacer otra consulta
+                    precio = a.PrecioCompra 
                 })
                 .ToListAsync();
 
             return Json(articulos);
         }
-        // 4. API PARA OBTENER PRECIO DE UN ARTÍCULO (Para autocompletar en el form)
         [HttpGet]
         public async Task<IActionResult> GetPrecioArticulo(int id)
         {
@@ -83,7 +76,6 @@ namespace SistemaAlmacenWeb.Controllers
             return Ok(new { precio = art.PrecioCompra });
         }
 
-        // 5. PROCESAR EL PEDIDO (GUARDAR Y ACTUALIZAR STOCK)
         [HttpPost]
         public async Task<IActionResult> ConfirmarPedido([FromBody] PedidoDTO pedidoData)
         {
@@ -96,7 +88,6 @@ namespace SistemaAlmacenWeb.Controllers
             {
                 try
                 {
-                    // A) Crear Cabecera del Pedido
                     var nuevoPedido = new Pedido
                     {
                         Fecha = DateTime.Now,
@@ -106,9 +97,8 @@ namespace SistemaAlmacenWeb.Controllers
                     };
 
                     _context.Pedidos.Add(nuevoPedido);
-                    await _context.SaveChangesAsync(); // Guardamos para obtener el ID
+                    await _context.SaveChangesAsync();
 
-                    // B) Procesar Detalles y Actualizar Inventario
                     foreach (var item in pedidoData.Detalles)
                     {
                         var detalle = new DetallePedido
@@ -120,17 +110,16 @@ namespace SistemaAlmacenWeb.Controllers
                         };
                         _context.DetallePedidos.Add(detalle);
 
-                        // --- ACTUALIZACIÓN DE STOCK ---
                         var articuloDB = await _context.Articulos.FindAsync(item.IdArticulo);
                         if (articuloDB != null)
                         {
-                            articuloDB.Cantidad += item.Cantidad; // SUMAMOS STOCK
-                            articuloDB.PrecioCompra = item.PrecioUnitario; // Actualizamos último costo
+                            articuloDB.Cantidad += item.Cantidad; 
+                            articuloDB.PrecioCompra = item.PrecioUnitario; 
                         }
                     }
 
                     await _context.SaveChangesAsync();
-                    await transaction.CommitAsync(); // Confirmamos todo
+                    await transaction.CommitAsync(); 
 
                     return Ok(new { message = "Pedido guardado y stock actualizado." });
                 }
@@ -142,7 +131,6 @@ namespace SistemaAlmacenWeb.Controllers
             }
         }
 
-        // 6. DETALLES DEL PEDIDO
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -158,8 +146,6 @@ namespace SistemaAlmacenWeb.Controllers
             return View(pedido);
         }
     }
-
-    // Clases auxiliares para recibir los datos del JavaScript
     public class PedidoDTO
     {
         public int IdProveedor { get; set; }
