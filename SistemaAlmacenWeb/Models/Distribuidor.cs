@@ -12,25 +12,21 @@ namespace SistemaAlmacenWeb.Models
 
         [Required]
         [MaxLength(100)]
-        [Display(Name = "Nombre del Distribuidor")]
-        public string Nombre { get; set; }
+        [Display(Name = "Nombre")]
+        public string Nombre { get; set; } 
 
         [MaxLength(20)]
-        [Display(Name = "Teléfono")]
-        public string Telefono { get; set; }
+        public string? Telefono { get; set; } 
 
         [MaxLength(200)]
-        [Display(Name = "Dirección")]
-        public string Direccion { get; set; }
+        public string? Direccion { get; set; }
 
         [MaxLength(200)]
-        [Display(Name = "Catálogo / URL")]
-        public string Catalogo { get; set; }
+        public string? Catalogo { get; set; }
 
         [MaxLength(100)]
-        [EmailAddress]
-        public string Email { get; set; }
+        public string? Email { get; set; }
 
-        public ICollection<Articulo> Articulos { get; set; }
+        public ICollection<Articulo>? Articulos { get; set; }
     }
 }

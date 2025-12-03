@@ -4,22 +4,22 @@
 
 <div class="row">
     <div class="col-md-4">
-        <div class="card p-3 mb-3 border-secondary">
-            <h4 class="card-title text-light mb-3"><i class="fas fa-file-invoice"></i> Datos del Pedido</h4>
+        <div class="card p-4 mb-3 shadow-sm border-0">
+            <h4 class="card-title text-primary mb-4"><i class="fas fa-file-invoice me-2"></i> Datos del Pedido</h4>
 
             <div class="form-group mb-3">
-                <label class="control-label text-warning">1. Seleccione Proveedor</label>
+                <label class="control-label fw-bold text-dark mb-1">1. Seleccione Proveedor</label>
                 <select id="cmbProveedor" class="form-select" asp-items="ViewBag.IdProveedor">
                     <option value="">-- Seleccione --</option>
                 </select>
             </div>
 
-            <hr class="border-secondary" />
+            <hr class="text-muted my-4" />
 
-            <h5 class="text-muted mb-3">2. Agregar Producto</h5>
+            <h5 class="text-secondary mb-3">2. Agregar Producto</h5>
 
-            <div class="form-group mb-2">
-                <label>Artículo</label>
+            <div class="form-group mb-3">
+                <label class="form-label text-muted small fw-bold">ARTÍCULO</label>
                 <select id="cmbArticulo" class="form-select" disabled>
                     <option value="">-- Primero elija un proveedor --</option>
                 </select>
@@ -27,53 +27,58 @@
 
             <div class="row">
                 <div class="col-6 mb-2">
-                    <label>Costo Unitario</label>
+                    <label class="form-label text-muted small fw-bold">COSTO UNIT.</label>
                     <div class="input-group">
-                        <span class="input-group-text bg-dark border-secondary text-muted">$</span>
+                        <span class="input-group-text bg-light text-muted">$</span>
                         <input type="number" id="txtCosto" class="form-control" step="0.01" />
                     </div>
                 </div>
                 <div class="col-6 mb-2">
-                    <label>Cantidad</label>
+                    <label class="form-label text-muted small fw-bold">CANTIDAD</label>
                     <input type="number" id="txtCantidad" class="form-control" value="1" min="1" />
                 </div>
             </div>
 
-            <button class="btn btn-primary w-100 mt-3 fw-bold" onclick="agregarProducto()">
-                <i class="fas fa-plus-circle"></i> Agregar a la Lista
+            <button class="btn btn-primary w-100 mt-4 fw-bold shadow-sm" onclick="agregarProducto()">
+                <i class="fas fa-plus-circle me-1"></i> Agregar a la Lista
             </button>
         </div>
     </div>
 
     <div class="col-md-8">
-        <div class="card p-3 h-100 border-secondary" style="background-color: var(--surface);">
-            <div class="d-flex justify-content-between align-items-center">
-                <h4 class="card-title text-light">Detalle de Compra</h4>
+        <div class="card p-4 h-100 shadow-sm border-0">
+            <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-3">
+                <h4 class="card-title text-dark mb-0">Detalle de Compra</h4>
                 <div class="text-end">
                     <small class="text-muted d-block">Total Estimado</small>
-                    <h2 class="fw-bold m-0" id="lblTotal" style="color: #4ade80;">$0.00</h2>
+                    <h2 class="text-success fw-bold m-0" id="lblTotal">$0.00</h2>
                 </div>
             </div>
 
-            <div class="table-responsive mt-3" style="max-height: 400px; overflow-y: auto;">
-                <table class="table align-middle">
-                    <thead>
-                        <tr style="background-color: var(--primary); color: white;">
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light sticky-top">
+                        <tr>
                             <th>Producto</th>
                             <th>Costo</th>
-                            <th>Cant.</th>
-                            <th>Subtotal</th>
+                            <th class="text-center">Cant.</th>
+                            <th class="text-end">Subtotal</th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody id="tablaDetalles">
                     </tbody>
                 </table>
+
+                <div id="msgVacio" class="text-center p-5 text-muted">
+                    <i class="fas fa-shopping-basket fa-3x mb-3 opacity-25"></i>
+                    <p>Agregue productos a la lista</p>
+                </div>
             </div>
 
-            <div class="mt-auto pt-3">
-                <button class="btn btn-success btn-lg w-100 shadow" onclick="guardarPedido()">
-                    <i class="fas fa-save"></i> FINALIZAR PEDIDO
+            <div class="mt-auto pt-3 border-top">
+                <button class="btn btn-success btn-lg w-100 shadow fw-bold" onclick="guardarPedido()">
+                    <i class="fas fa-save me-2"></i> FINALIZAR PEDIDO
                 </button>
             </div>
         </div>
@@ -106,13 +111,13 @@
                 cmbArt.innerHTML = '<option value="">-- Seleccione Artículo --</option>';
 
                 if (articulos.length === 0) {
-                    cmbArt.innerHTML = '<option value="">Este proveedor no tiene artículos asignados</option>';
+                    cmbArt.innerHTML = '<option value="">Este proveedor no tiene artículos</option>';
                 } else {
                     articulos.forEach(art => {
                         let option = document.createElement("option");
                         option.value = art.id;
                         option.text = art.nombre;
-                        option.setAttribute("data-precio", art.precio); 
+                        option.setAttribute("data-precio", art.precio);
                         cmbArt.appendChild(option);
                     });
                     cmbArt.disabled = false;
@@ -122,6 +127,7 @@
                 cmbArt.innerHTML = '<option value="">Error al cargar</option>';
             }
         });
+
         document.getElementById("cmbArticulo").addEventListener("change", function() {
             let precio = this.options[this.selectedIndex].getAttribute("data-precio");
             if (precio) {
@@ -139,12 +145,7 @@
             let cantidad = parseInt(document.getElementById("txtCantidad").value);
 
             if (!idArticulo || isNaN(costo) || isNaN(cantidad) || cantidad < 1) {
-                Swal.fire({
-                    title: "Datos incompletos",
-                    text: "Seleccione un artículo y verifique cantidad/costo",
-                    icon: "warning",
-                    background: '#292c37', color: '#fff'
-                });
+                Swal.fire({ title: "Datos incompletos", text: "Verifique la información", icon: "warning" });
                 return;
             }
 
@@ -155,7 +156,7 @@
             } else {
                 listaProductos.push({
                     id: idArticulo,
-                    nombre: nombreArt.split('-')[1] || nombreArt, 
+                    nombre: nombreArt.split('-')[1] || nombreArt,
                     costo: costo,
                     cantidad: cantidad,
                     subtotal: costo * cantidad
@@ -172,20 +173,27 @@
 
         function renderizarTabla() {
             let tbody = document.getElementById("tablaDetalles");
+            let msg = document.getElementById("msgVacio");
             tbody.innerHTML = "";
             let total = 0;
+
+            if (listaProductos.length === 0) {
+                msg.style.display = "block";
+            } else {
+                msg.style.display = "none";
+            }
 
             listaProductos.forEach((item, index) => {
                 total += item.subtotal;
                 tbody.innerHTML += `
                     <tr>
-                        <td>${item.nombre}</td>
+                        <td class="fw-bold text-dark">${item.nombre}</td>
                         <td>$${item.costo.toFixed(2)}</td>
-                        <td>${item.cantidad}</td>
-                        <td class="fw-bold">$${item.subtotal.toFixed(2)}</td>
+                        <td class="text-center">${item.cantidad}</td>
+                        <td class="fw-bold text-success text-end">$${item.subtotal.toFixed(2)}</td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-outline-danger" onclick="eliminarFila(${index})">
-                                <i class="fas fa-trash"></i>
+                            <button class="btn btn-sm btn-outline-danger border-0" onclick="eliminarFila(${index})">
+                                <i class="fas fa-times"></i>
                             </button>
                         </td>
                     </tr>
@@ -204,7 +212,7 @@
             let idProv = document.getElementById("cmbProveedor").value;
 
             if (listaProductos.length === 0) {
-                Swal.fire({ title: "Carrito vacío", icon: "warning", background: '#292c37', color: '#fff' });
+                Swal.fire("Carrito vacío", "Agregue productos primero", "warning");
                 return;
             }
 
@@ -227,12 +235,11 @@
                 if (response.ok) {
                     Swal.fire({
                         title: "¡Pedido Guardado!",
-                        text: "El stock ha sido actualizado correctamente.",
+                        text: "Inventario actualizado correctamente.",
                         icon: "success",
-                        confirmButtonColor: '#9f111b',
-                        background: '#292c37', color: '#fff'
+                        confirmButtonColor: '#0d6efd'
                     }).then(() => {
-                        window.location.href = "/Pedidos/Index";
+                        window.location.href = "/Home/Index";
                     });
                 } else {
                     let text = await response.text();
